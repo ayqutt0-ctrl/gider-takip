@@ -16,6 +16,7 @@
       --danger: #ef4444;
       --warning: #f59e0b;
       --success: #10b981;
+      --info: #3b82f6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 16px; padding-top: 50px; padding-bottom: 60px; min-height: 100vh; }
@@ -54,6 +55,7 @@
       display: flex; justify-content: space-between; align-items: center;
       border-left: 4px solid var(--accent); transition: all 0.2s ease;
     }
+    .item.info { border-left-color: var(--info); }
     .item.warning { border-left-color: var(--warning); }
     .item.urgent { border-left-color: var(--danger); }
     .item.paid { opacity: 0.5; border-left-color: var(--success); filter: grayscale(0.6); }
@@ -64,9 +66,10 @@
     .item-title { font-size: 15px; font-weight: 600; }
     .item-sub { font-size: 12px; color: var(--subtext); margin-top: 2px; }
     
-    .badge { display: inline-block; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: bold; margin-left: 4px; }
-    .badge-urgent { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-    .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-left: 6px; }
+    .badge-urgent { background: rgba(239, 68, 68, 0.25); color: var(--danger); }
+    .badge-warning { background: rgba(245, 158, 11, 0.25); color: var(--warning); }
+    .badge-info { background: rgba(59, 130, 246, 0.25); color: var(--accent); }
     
     .item-right { text-align: right; display: flex; align-items: center; gap: 8px; }
     .item-price { font-weight: 700; font-size: 15px; color: var(--accent); }
@@ -137,15 +140,13 @@
   <script>
     let expenses = JSON.parse(localStorage.getItem('expenses_v2')) || [];
 
-    // Ayın kaçıncı günü olduğunu alır
-    const today = new Date().getDate();
-
     function getDaysLeft(payDay) {
-      if (payDay >= today) {
-        return payDay - today;
+      const today = new Date().getDate();
+      const pDay = Number(payDay);
+      if (pDay >= today) {
+        return pDay - today;
       } else {
-        // Gelecek ayın ödemesi
-        return (30 - today) + Number(payDay);
+        return (30 - today) + pDay;
       }
     }
 
@@ -158,7 +159,7 @@
       list.innerHTML = '';
       let totals = { '₺': 0, '$': 0, '€': 0 };
 
-      // Kalan güne göre sırala (Ödenmemişler üste, ödenenler alta)
+      // Ödenmeyenler üste, ödenenler alta
       expenses.sort((a, b) => {
         if (a.paid !== b.paid) return a.paid ? 1 : -1;
         return getDaysLeft(a.payDay) - getDaysLeft(b.payDay);
@@ -168,11 +169,12 @@
         totals[item.currency] += Number(item.amount);
         
         const daysLeft = getDaysLeft(item.payDay);
-        let statusClass = '';
-        let badge = '';
+        let statusClass = 'info';
+        let badge = `<span class="badge badge-info">${daysLeft} gün kaldı</span>`;
 
         if (item.paid) {
           statusClass = 'paid';
+          badge = '';
         } else if (daysLeft === 0) {
           statusClass = 'urgent';
           badge = '<span class="badge badge-urgent">BUGÜN!</span>';
@@ -182,6 +184,7 @@
         }
 
         const icon = item.category ? item.category.split(' ')[0] : '💳';
+        const categoryName = item.category ? item.category.substring(2).trim() : 'Gider';
 
         list.innerHTML += `
           <div class="item ${statusClass}">
@@ -189,7 +192,7 @@
               <div class="item-icon">${icon}</div>
               <div>
                 <div class="item-title">${item.title} ${badge}</div>
-                <div class="item-sub">Her ayın ${item.payDay}. günü • ${item.category.split(' ')[1] || 'Gider'}</div>
+                <div class="item-sub">Her ayın ${item.payDay}. günü • ${categoryName}</div>
               </div>
             </div>
             <div class="item-right">
@@ -201,7 +204,6 @@
         `;
       });
 
-      // Toplam Hesapları Göster
       totalTL.innerText = `${totals['₺'].toLocaleString('tr-TR')} ₺`;
       
       let subTotals = [];
