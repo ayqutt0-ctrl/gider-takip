@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Gider Takip</title>
+  <title>Gider Takip Pro</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- PDF ve Excel Kütüphaneleri -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     /* TEMALAR */
     body.theme-default {
@@ -43,11 +46,12 @@
     .header h1 { font-size: 24px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
     .header-actions { display: flex; gap: 10px; align-items: center; }
 
-    .theme-select {
+    .theme-select, .export-btn {
       background: var(--card); color: var(--text); border: 1px solid var(--border);
       padding: 8px 14px; border-radius: 10px; font-size: 13px; outline: none; cursor: pointer;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: all 0.2s;
     }
+    .export-btn:hover { background: var(--accent); color: #000; font-weight: bold; }
 
     /* CANLI DÖVİZ BANDI */
     .rates-ticker {
@@ -87,6 +91,15 @@
     .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
     .progress-text { font-size: 11px; color: var(--subtext); margin-top: 6px; text-align: right; font-weight: 600; }
 
+    /* HIZLI ŞABLONLAR */
+    .quick-templates { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .template-chip {
+      background: var(--input-bg); border: 1px solid var(--border); border-radius: 20px;
+      padding: 6px 12px; font-size: 11px; white-space: nowrap; cursor: pointer; color: var(--text);
+      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    }
+    .template-chip:hover { border-color: var(--accent); color: var(--accent); }
+
     /* FORM */
     .form-group { display: flex; flex-direction: column; gap: 12px; }
     .form-group input, .form-group select {
@@ -94,8 +107,7 @@
       border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 13px; outline: none;
     }
     .form-row { display: flex; gap: 10px; }
-    .form-row select { flex: 1; }
-    .form-row input { flex: 2; }
+    .form-row select, .form-row input { flex: 1; }
     .btn-primary {
       width: 100%; padding: 12px; border-radius: 10px; border: none;
       background: var(--accent); color: #000; font-weight: bold; font-size: 14px; cursor: pointer;
@@ -110,13 +122,14 @@
       display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);
     }
     .item-title { font-size: 14px; font-weight: 700; }
-    .item-sub { font-size: 11px; color: var(--subtext); margin-top: 3px; display: flex; gap: 8px; align-items: center; }
+    .item-sub { font-size: 11px; color: var(--subtext); margin-top: 3px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     
     /* ÖDEME ROZETİ */
     .due-badge { font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; display: inline-block; }
     .due-badge.urgent { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
     .due-badge.normal { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
     .due-badge.passed { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .installment-badge { background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; }
 
     .item-right { text-align: right; display: flex; align-items: center; gap: 8px; }
     .item-price { font-weight: 800; font-size: 14px; color: var(--accent); }
@@ -167,7 +180,6 @@
     .msg.bot { background: var(--input-bg); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
     .msg.user { background: #8b5cf6; color: #fff; align-self: flex-end; font-weight: 600; }
     
-    /* SESLİ OKU BUTONU */
     .tts-btn {
       display: inline-flex; align-items: center; gap: 4px; font-size: 10px; margin-top: 6px;
       color: var(--accent); cursor: pointer; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);
@@ -178,7 +190,7 @@
     .chat-input input { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
     .chat-input button { padding: 10px 16px; border-radius: 10px; border: none; background: #8b5cf6; color: #fff; font-weight: bold; cursor: pointer; }
 
-    /* FOOTER (SAYFA ALTI AÇIKLAMA) */
+    /* FOOTER */
     .footer {
       margin-top: 40px; padding: 20px 0 10px 0; border-top: 1px solid var(--border);
       text-align: center; font-size: 12px; color: var(--subtext); display: flex;
@@ -196,6 +208,8 @@
     <div class="header">
       <h1><i class="fa-solid fa-wallet"></i> Gider Takip</h1>
       <div class="header-actions">
+        <button class="export-btn" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button class="export-btn" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
         <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
           <option value="theme-default">🎨 Mavi</option>
           <option value="theme-dark">🖤 Koyu</option>
@@ -238,6 +252,15 @@
 
         <div class="card">
           <h3><i class="fa-solid fa-plus-circle"></i> Yeni Gider Ekle</h3>
+          
+          <!-- HIZLI ŞABLONLAR -->
+          <div class="quick-templates">
+            <div class="template-chip" onclick="fillTemplate('Market', 500, '₺', 'Fatura')"><i class="fa-solid fa-cart-shopping"></i> Market 500₺</div>
+            <div class="template-chip" onclick="fillTemplate('Benzin', 1000, '₺', 'Araç')"><i class="fa-solid fa-gas-pump"></i> Benzin 1000₺</div>
+            <div class="template-chip" onclick="fillTemplate('İnternet', 300, '₺', 'Fatura')"><i class="fa-solid fa-wifi"></i> İnternet 300₺</div>
+            <div class="template-chip" onclick="fillTemplate('Spotify', 60, '₺', 'Abonelik')"><i class="fa-solid fa-music"></i> Spotify 60₺</div>
+          </div>
+
           <div class="form-group">
             <input type="text" id="title" placeholder="Gider Adı (örn. KYK, İnternet, Market)">
             <div class="form-row">
@@ -258,12 +281,21 @@
               </select>
               <input type="number" id="payDay" placeholder="Ödeme Günü (1-31)" min="1" max="31">
             </div>
+            <div class="form-row">
+              <select id="installments">
+                <option value="1">Tek Çekim / Peşin</option>
+                <option value="2">2 Taksit</option>
+                <option value="3">3 Taksit</option>
+                <option value="6">6 Taksit</option>
+                <option value="12">12 Taksit</option>
+              </select>
+            </div>
             <button class="btn-primary" onclick="addExpense()">Ekle</button>
           </div>
         </div>
 
         <div class="card">
-          <h3><i class="fa-solid fa-list-check"></i> Gider Kayıtları</h3>
+          <h3><i class="fa-solid fa-list-check"></i> Gider Kayıtları (Ödeme Gününe Göre)</h3>
           <div class="expense-list" id="expenseList"></div>
         </div>
 
@@ -303,8 +335,8 @@
     <div class="footer">
       <p>Kişisel Bütçe ve Gider Takip Sistemi © 2026 Tüm Hakları Saklıdır.</p>
       <div class="footer-badges">
-        <span class="footer-badge"><i class="fa-solid fa-code-branch"></i> Sürüm: v5.2.0</span>
-        <span class="footer-badge"><i class="fa-regular fa-clock"></i> Güncelleme: 15 Ağustos 2026 - 12:15</span>
+        <span class="footer-badge"><i class="fa-solid fa-code-branch"></i> Sürüm: v5.3.0</span>
+        <span class="footer-badge"><i class="fa-regular fa-clock"></i> Güncelleme: 15 Ağustos 2026 - 12:32</span>
         <span class="footer-badge"><i class="fa-solid fa-shield-halved"></i> Yerel Veri Kaydı</span>
       </div>
     </div>
@@ -359,6 +391,14 @@
       render();
     }
 
+    function fillTemplate(title, amount, currency, category) {
+      document.getElementById('title').value = title;
+      document.getElementById('amount').value = amount;
+      document.getElementById('currency').value = currency;
+      document.getElementById('category').value = category;
+      document.getElementById('payDay').value = new Date().getDate();
+    }
+
     function playTickSound() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -403,10 +443,21 @@
       const currency = document.getElementById('currency').value;
       const category = document.getElementById('category').value;
       const payDay = document.getElementById('payDay').value;
+      const installments = Number(document.getElementById('installments').value);
 
       if (!title || !amount || !payDay) return alert('Lütfen bilgileri eksiksiz girin!');
 
-      expenses.push({ id: Date.now(), title, amount, currency, category, payDay });
+      const monthlyAmount = (Number(amount) / installments).toFixed(2);
+
+      expenses.push({ 
+        id: Date.now(), 
+        title: installments > 1 ? `${title} (${installments} Taksit)` : title, 
+        amount: monthlyAmount, 
+        currency, 
+        category, 
+        payDay: Number(payDay),
+        installments 
+      });
       
       document.getElementById('title').value = '';
       document.getElementById('amount').value = '';
@@ -440,6 +491,16 @@
       link.click();
     }
 
+    function getRemainingDays(payDay) {
+      const today = new Date();
+      const currentDay = today.getDate();
+      let targetDay = Number(payDay);
+
+      let diff = targetDay - currentDay;
+      if (diff < 0) diff += 30; // Geçmiş günleri döngüsel olarak sonraki aya atar
+      return diff;
+    }
+
     function getRemainingDaysText(payDay) {
       const today = new Date();
       const currentDay = today.getDate();
@@ -461,6 +522,9 @@
       list.innerHTML = '';
       let totalTL = 0;
 
+      // ÖDEME GÜNÜNE KAN KALAN GÜNE GÖRE SIRALAMA (Yaklaşan en üstte)
+      expenses.sort((a, b) => getRemainingDays(a.payDay) - getRemainingDays(b.payDay));
+
       expenses.forEach(item => {
         let itemTL = Number(item.amount);
         if (item.currency === '$') itemTL *= liveRates.USD;
@@ -468,13 +532,14 @@
         totalTL += itemTL;
 
         const dueHtml = getRemainingDaysText(item.payDay);
+        const instHtml = item.installments > 1 ? `<span class="installment-badge">${item.installments} Taksit</span>` : '';
 
         list.innerHTML += `
           <div class="item">
             <div>
               <div class="item-title">${item.title}</div>
               <div class="item-sub">
-                Her ayın ${item.payDay}. günü • ${dueHtml}
+                Her ayın ${item.payDay}. günü • ${dueHtml} ${instHtml}
               </div>
             </div>
             <div class="item-right">
@@ -540,6 +605,35 @@
       const tl = parseFloat(document.getElementById('convertTL').value) || 0;
       document.getElementById('resUSD').innerText = `$${(tl / liveRates.USD).toFixed(2)}`;
       document.getElementById('resEUR').innerText = `€${(tl / liveRates.EUR).toFixed(2)}`;
+    }
+
+    function exportToExcel() {
+      const data = expenses.map(e => ({
+        "Gider Adı": e.title,
+        "Tutar": e.amount,
+        "Para Birimi": e.currency,
+        "Kategori": e.category,
+        "Ödeme Günü": `Her ayın ${e.payDay}. günü`
+      }));
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Giderler");
+      XLSX.writeFile(wb, "Gider_Raporu.xlsx");
+    }
+
+    function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text("Gider Takip Raporu", 14, 20);
+      
+      let y = 30;
+      doc.setFontSize(10);
+      expenses.forEach((e, i) => {
+        doc.text(`${i + 1}. ${e.title} - ${e.amount} ${e.currency} (${e.category}) - Gün: ${e.payDay}`, 14, y);
+        y += 8;
+      });
+      doc.save("Gider_Raporu.pdf");
     }
 
     function toggleChat() {
@@ -612,7 +706,7 @@
              "2️⃣ Gider Ekle: Gider adı, tutarı ve ödeme gününü girip kaydet.\n" +
              "3️⃣ Takip Et: Ödemene kaç gün kaldığını liste rozetlerinden takip et.\n" +
              "4️⃣ Takvime Aktar: Takvim ikonuyla hatırlatıcıyı indir.\n" +
-             "5️⃣ Soru Sor: Bütçen veya döviz kurları hakkındaki detayları bana sorabilirsin!";
+             "5️⃣ Rapor Al: Üstteki PDF/Excel butonlarıyla çıktısını al!";
     }
 
     function processSmartReply(query, totalGiderTL) {
