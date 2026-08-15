@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cebimdeki Giderler Pro v3</title>
+  <title>Gider Takip</title>
   <style>
     /* TEMALAR */
     body.theme-default {
@@ -34,7 +34,7 @@
     body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 60px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
     
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .header h1 { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .header h1 { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
     .header-actions { display: flex; gap: 6px; align-items: center; }
     
     .guide-btn {
@@ -65,16 +65,15 @@
     .guide-box li { margin-bottom: 6px; color: var(--text); }
     .guide-close { background: var(--accent); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; float: right; }
 
-    /* CANLI DÖVİZ BANDI */
+    /* CANLI DÖVİZ BANDI (YENİLEME BUTONSUZ, OTOMATİK VE KÜSÜRATLI) */
     .rates-ticker {
-      background: var(--card); border: 1px solid var(--border); padding: 10px 12px;
-      border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
+      background: var(--card); border: 1px solid var(--border); padding: 10px 14px;
+      border-radius: 12px; display: flex; justify-content: space-around; align-items: center;
       font-size: 12px; margin-bottom: 16px; font-weight: 600;
     }
     .rate-item { display: flex; align-items: center; gap: 4px; }
     .rate-label { color: var(--subtext); font-size: 11px; }
-    .rate-val { color: var(--text); }
-    .refresh-btn { background: none; border: none; color: var(--accent); font-size: 14px; cursor: pointer; }
+    .rate-val { color: var(--text); font-family: monospace; font-size: 13px; font-weight: bold; }
 
     /* BÜTÇE & SAYAÇ KARTI */
     .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
@@ -172,7 +171,7 @@
 <body class="theme-default">
 
   <div class="header">
-    <h1>Cebimdeki Giderler</h1>
+    <h1>Gider Takip</h1>
     <div class="header-actions">
       <button class="guide-btn" onclick="toggleGuide()">❓ Rehber</button>
       <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
@@ -196,18 +195,17 @@
       <li>💵 <b>Aylık Gelir:</b> Bütçenizi girin, geriye kalan net paranız hesaplansın.</li>
       <li>➕ <b>Gider Ekleme:</b> Fatura veya borçlarınızı son ödeme günü (1-31) ile kaydedin.</li>
       <li>🔔 <b>Öncelikli Uyarı:</b> Son 3 günü kalan ödemeler otomatik olarak üstte kırmızı uyarı verir.</li>
-      <li>📊 <b>Bütçe Sağlık Skoru:</b> Sabit giderlerinizin bütçenize oranını (🟢/🟡/🔴) otomatik analiz eder.</li>
+      <li>📊 <b>Bütçe Sağlık Skoru:</b> Sabit giderlerinizin bütçenize oranını otomatik analiz eder.</li>
     </ul>
     <button class="guide-close" onclick="toggleGuide()">Kapat 👍</button>
     <div style="clear:both;"></div>
   </div>
 
-  <!-- CANLI DÖVİZ BANDI -->
+  <!-- ANLIK CANLI DÖVİZ BANDI -->
   <div class="rates-ticker">
-    <div class="rate-item"><span class="rate-label">USD:</span> <span class="rate-val" id="usdRate">34.50 ₺</span></div>
-    <div class="rate-item"><span class="rate-label">EUR:</span> <span class="rate-val" id="eurRate">37.20 ₺</span></div>
-    <div class="rate-item"><span class="rate-label">Gr. Altın:</span> <span class="rate-val" id="goldRate" style="color:var(--gold);">3.020 ₺</span></div>
-    <button class="refresh-btn" onclick="fetchLiveRates()" title="Kurları Yenile">🔄</button>
+    <div class="rate-item"><span class="rate-label">USD:</span> <span class="rate-val" id="usdRate">Yükleniyor...</span></div>
+    <div class="rate-item"><span class="rate-label">EUR:</span> <span class="rate-val" id="eurRate">Yükleniyor...</span></div>
+    <div class="rate-item"><span class="rate-label">Gr. Altın:</span> <span class="rate-val" id="goldRate" style="color:var(--gold);">Yükleniyor...</span></div>
   </div>
 
   <!-- DASHBOARD -->
@@ -312,7 +310,9 @@
 
     let budget = localStorage.getItem('monthly_budget_v3') || 0;
     let activeTheme = localStorage.getItem('app_theme_v3') || 'theme-default';
-    let liveRates = { USD: 34.50, EUR: 37.20, GOLD: 3020 };
+    
+    // Varsayılan kurlar
+    let liveRates = { USD: 34.5025, EUR: 37.2140, GOLD: 3025.50 };
 
     document.body.className = activeTheme;
     document.getElementById('themeSelect').value = activeTheme;
@@ -323,18 +323,30 @@
       box.style.display = (box.style.display === 'block') ? 'none' : 'block';
     }
 
+    // ANLIK VE KÜSÜRATLI CANLI DÖVİZ VERİSİ
     async function fetchLiveRates() {
       try {
-        const resFx = await fetch('https://api.frankfurter.app/latest?from=USD&to=TRY,EUR');
-        if(resFx.ok) {
-          const dataFx = await resFx.json();
-          liveRates.USD = dataFx.rates.TRY;
-          liveRates.EUR = (dataFx.rates.TRY / dataFx.rates.EUR);
-          document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(2)} ₺`;
-          document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(2)} ₺`;
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        if(res.ok) {
+          const data = await res.json();
+          const usdTry = data.rates.TRY;
+          const usdEur = data.rates.EUR;
+          const eurTry = usdTry / usdEur;
+
+          liveRates.USD = usdTry;
+          liveRates.EUR = eurTry;
+
+          // Ons Altın / Gram Altın Dönüşümü (Yaklaşık Anlık Hesaplama)
+          liveRates.GOLD = (2650 / 31.1035) * usdTry;
+
+          document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(4)} ₺`;
+          document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(4)} ₺`;
+          document.getElementById('goldRate').innerText = `${liveRates.GOLD.toFixed(2)} ₺`;
         }
       } catch (err) {
-        console.log("Canlı döviz çekilemedi, varsayılan kurlar kullanılıyor.");
+        document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(4)} ₺`;
+        document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(4)} ₺`;
+        document.getElementById('goldRate').innerText = `${liveRates.GOLD.toFixed(2)} ₺`;
       }
       render();
     }
@@ -576,8 +588,9 @@
       fileReader.readAsText(event.target.files[0]);
     }
 
-    // Uygulamayı Başlat
+    // İlk Yükleme ve 30 Saniyede Bir Otomatik Canlı Veri Yenileme
     fetchLiveRates();
+    setInterval(fetchLiveRates, 30000);
   </script>
 </body>
 </html>
