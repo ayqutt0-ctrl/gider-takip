@@ -37,10 +37,27 @@
     
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .header h1 { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .header-actions { display: flex; gap: 6px; align-items: center; }
+    
+    .guide-btn {
+      background: var(--card); color: var(--accent); border: 1px solid var(--border);
+      padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;
+    }
+
     .theme-select {
       background: var(--card); color: var(--text); border: 1px solid var(--border);
       padding: 6px 10px; border-radius: 8px; font-size: 12px; outline: none;
     }
+
+    /* KULLANIM KILAVUZU KUTUSU */
+    .guide-box {
+      background: var(--card); border: 1px solid var(--accent); padding: 16px;
+      border-radius: 14px; margin-bottom: 16px; font-size: 13px; display: none; line-height: 1.5;
+    }
+    .guide-box h3 { color: var(--accent); margin-bottom: 8px; font-size: 14px; }
+    .guide-box ul { padding-left: 18px; margin-bottom: 10px; }
+    .guide-box li { margin-bottom: 6px; color: var(--text); }
+    .guide-close { background: var(--accent); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; float: right; }
 
     /* CANLI DÖVİZ BANDI */
     .rates-ticker {
@@ -145,19 +162,36 @@
 
   <div class="header">
     <h1>Cebimdeki Giderler</h1>
-    <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
-      <option value="theme-default">🎨 Mavi (Varsayılan)</option>
-      <option value="theme-dark">🖤 Saf Koyu</option>
-      <option value="theme-light">☀️ Aydınlık</option>
-      <option value="theme-gray">🩶 Füme / Gri</option>
-    </select>
+    <div class="header-actions">
+      <button class="guide-btn" onclick="toggleGuide()">❓ Nasıl Kullanılır?</button>
+      <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
+        <option value="theme-default">🎨 Mavi</option>
+        <option value="theme-dark">🖤 Koyu</option>
+        <option value="theme-light">☀️ Açık</option>
+        <option value="theme-gray">🩶 Gri</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- NASIL KULLANILIR PENCERESİ -->
+  <div class="guide-box" id="guideBox">
+    <h3>❓ Nasıl Kullanılır? (Kısa Rehber)</h3>
+    <ul>
+      <li>💵 <b>Aylık Gelir:</b> Sayfanın üstünden bütçeni/maaşını gir. Toplam giderler çıkınca net kalan paran hesaplanır.</li>
+      <li>➕ <b>Gider Ekleme:</b> Fatura, abonelik veya borçlarını tutarı ve <b>ödeme günü (1-31)</b> ile kaydet.</li>
+      <li>🔔 <b>Gün Sayacı:</b> Sistem ödemene kaç gün kaldığını hesaplar ve uyarır.</li>
+      <li>✓ <b>Ödendi İşaretleme:</b> Ödediğin giderin yanındaki tik (✓) butonuna bas.</li>
+      <li>🔄 <b>Ay Başı Sıfırlama:</b> Her yeni ay başladığında en alttaki <i>"Yeni Aya Başla"</i> butonuna basarak tüm ödemeleri tekrar aktif et.</li>
+    </ul>
+    <button class="guide-close" onclick="toggleGuide()">Anladım 👍</button>
+    <div style="clear:both;"></div>
   </div>
 
   <!-- CANLI DÖVİZ BANDI -->
   <div class="rates-ticker">
     <div class="rate-item"><span class="rate-label">USD:</span> <span class="rate-val" id="usdRate">... ₺</span></div>
     <div class="rate-item"><span class="rate-label">EUR:</span> <span class="rate-val" id="eurRate">... ₺</span></div>
-    <div class="rate-item"><span class="rate-label">Gram Gold:</span> <span class="rate-val" id="goldRate" style="color:var(--gold);">... ₺</span></div>
+    <div class="rate-item"><span class="rate-label">Gram Altın:</span> <span class="rate-val" id="goldRate" style="color:var(--gold);">... ₺</span></div>
     <button class="refresh-btn" onclick="fetchLiveRates()" title="Kurları Yenile">🔄</button>
   </div>
 
@@ -251,22 +285,24 @@
     let budget = localStorage.getItem('monthly_budget') || 0;
     let activeTheme = localStorage.getItem('app_theme') || 'theme-default';
 
-    let liveRates = { USD: 34.5, EUR: 37.2, GOLD: 3020 }; // Varsayılan değerler
+    let liveRates = { USD: 34.5, EUR: 37.2, GOLD: 3020 };
 
     document.body.className = activeTheme;
     document.getElementById('themeSelect').value = activeTheme;
     document.getElementById('monthlyBudget').value = budget ? budget : '';
 
-    // Canlı Döviz ve Gram Altın Kurlarını Çek
+    function toggleGuide() {
+      const box = document.getElementById('guideBox');
+      box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+    }
+
     async function fetchLiveRates() {
       try {
-        // Döviz Kurları (Frankfurter API)
         const resFx = await fetch('https://api.frankfurter.app/latest?from=USD&to=TRY,EUR');
         const dataFx = await resFx.json();
         liveRates.USD = dataFx.rates.TRY;
         liveRates.EUR = (dataFx.rates.TRY / dataFx.rates.EUR);
 
-        // Gram Altın Yaklaşık Hesap (Ons Altın / 31.1035 * USD_TRY)
         const resGold = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
         if(resGold.ok) {
           const goldData = await resGold.json();
@@ -280,7 +316,6 @@
 
         render();
       } catch (err) {
-        console.log("Kurlar güncellenemedi, varsayılan kurlar kullanılıyor.", err);
         document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(2)} ₺`;
         document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(2)} ₺`;
         document.getElementById('goldRate').innerText = `${liveRates.GOLD.toLocaleString('tr-TR')} ₺`;
@@ -334,7 +369,6 @@
       expenses.forEach((item) => {
         totalsOriginal[item.currency] += Number(item.amount);
 
-        // TL Karşılığını hesapla
         let itemTL = Number(item.amount);
         if (item.currency === '$') itemTL *= liveRates.USD;
         if (item.currency === '€') itemTL *= liveRates.EUR;
@@ -345,7 +379,6 @@
         categoryTotals[item.category] = (categoryTotals[item.category] || 0) + itemTL;
       });
 
-      // Filtrelenmiş liste gösterimi
       expenses.forEach((item, index) => {
         const matchesSearch = item.title.toLowerCase().includes(searchVal);
         const matchesCat = filterCat === 'ALL' || item.category === filterCat;
@@ -388,7 +421,6 @@
         `;
       });
 
-      // Göstergeleri Güncelle
       totalTL.innerText = `${Math.round(totalTLValue).toLocaleString('tr-TR')} ₺`;
       
       let subTotals = [];
@@ -396,17 +428,14 @@
       if (totalsOriginal['€'] > 0) subTotals.push(`${totalsOriginal['€']} €`);
       totalBreakdown.innerText = subTotals.length > 0 ? `Döviz Toplamı: ${subTotals.join(' | ')}` : '';
 
-      // Kalan Bütçe Hesaplama
       const netRemaining = budget - totalTLValue;
       remainingEl.innerText = `${Math.round(netRemaining).toLocaleString('tr-TR')} ₺`;
       remainingEl.style.color = netRemaining < 0 ? 'var(--danger)' : 'var(--accent)';
 
-      // İlerleme Çubuğu
       const percentPaid = totalTLValue > 0 ? Math.round((paidTLValue / totalTLValue) * 100) : 0;
       progressFill.style.width = `${percentPaid}%`;
       progressText.innerText = `%${percentPaid} Ödendi`;
 
-      // Kategori Dağılım Grafiği
       chartContent.innerHTML = '';
       if (totalTLValue > 0) {
         for (let cat in categoryTotals) {
@@ -491,7 +520,6 @@
       fileReader.readAsText(event.target.files[0]);
     }
 
-    // İlk yüklemede kurları getir ve render et
     fetchLiveRates();
   </script>
 </body>
