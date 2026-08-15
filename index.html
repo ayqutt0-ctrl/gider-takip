@@ -13,16 +13,16 @@
       --subtext: #94a3b8; --input-bg: #0f172a; --border: #334155;
     }
     body.theme-dark {
-      --bg: #000000; --card: #121212; --accent: #00adb5; --text: #eeeeee;
+      --bg: #050505; --card: #121212; --accent: #00adb5; --text: #eeeeee;
       --subtext: #888888; --input-bg: #1e1e1e; --border: #2a2a2a;
     }
     body.theme-light {
-      --bg: #f1f5f9; --card: #ffffff; --accent: #0284c7; --text: #0f172a;
-      --subtext: #64748b; --input-bg: #f8fafc; --border: #cbd5e1;
+      --bg: #f8fafc; --card: #ffffff; --accent: #0284c7; --text: #0f172a;
+      --subtext: #64748b; --input-bg: #f1f5f9; --border: #e2e8f0;
     }
     body.theme-gray {
-      --bg: #222831; --card: #393e46; --accent: #00adb5; --text: #eeeeee;
-      --subtext: #929aab; --input-bg: #222831; --border: #4b525d;
+      --bg: #18181b; --card: #27272a; --accent: #a1a1aa; --text: #f4f4f5;
+      --subtext: #a1a1aa; --input-bg: #18181b; --border: #3f3f46;
     }
 
     :root {
@@ -30,7 +30,7 @@
       --warning: #f59e0b;
       --success: #10b981;
       --gold: #eab308;
-      --ai-glow: linear-gradient(135deg, #a855f7, #6366f1, #3b82f6);
+      --ai-glow: linear-gradient(135deg, #6366f1, #3b82f6, #06b6d4);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -39,86 +39,107 @@
     .container { max-width: 1200px; margin: 0 auto; }
 
     /* ÜST BAŞLIK & TEMA */
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-    .header h1 { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .header h1 { font-size: 24px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
     .header-actions { display: flex; gap: 10px; align-items: center; }
 
     .theme-select {
       background: var(--card); color: var(--text); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer;
+      padding: 8px 14px; border-radius: 10px; font-size: 13px; outline: none; cursor: pointer;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
     }
 
     /* CANLI DÖVİZ BANDI */
     .rates-ticker {
-      background: var(--card); border: 1px solid var(--border); padding: 10px 16px;
-      border-radius: 12px; display: flex; justify-content: space-around; align-items: center;
-      font-size: 13px; margin-bottom: 20px; font-weight: 600; flex-wrap: wrap; gap: 10px;
+      background: var(--card); border: 1px solid var(--border); padding: 12px 20px;
+      border-radius: 14px; display: flex; justify-content: space-around; align-items: center;
+      font-size: 13px; margin-bottom: 24px; font-weight: 600; flex-wrap: wrap; gap: 10px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); backdrop-filter: blur(8px);
     }
-    .rate-item { display: flex; align-items: center; gap: 6px; }
+    .rate-item { display: flex; align-items: center; gap: 8px; }
     .rate-label { color: var(--subtext); font-size: 12px; }
     .rate-val { color: var(--text); font-family: monospace; font-size: 14px; font-weight: bold; }
 
     /* MASAÜSTÜ İKİLİ DÜZEN */
-    .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .main-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
     @media (min-width: 900px) { .main-grid { grid-template-columns: 1.1fr 0.9fr; } }
-    .column { display: flex; flex-direction: column; gap: 20px; }
+    .column { display: flex; flex-direction: column; gap: 24px; }
 
     /* KART TASARIMLARI */
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
-    .card h3 { font-size: 15px; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 22px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); transition: transform 0.2s;
+    }
+    .card h3 { font-size: 16px; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
 
     /* DASHBOARD BÜTÇE KARTLARI */
-    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .dash-card { background: var(--input-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
-    .dash-card p { font-size: 11px; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; }
-    .dash-card h2 { font-size: 18px; font-weight: 800; color: var(--accent); }
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .dash-card { background: var(--input-bg); padding: 14px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+    .dash-card p { font-size: 11px; color: var(--subtext); text-transform: uppercase; margin-bottom: 6px; font-weight: 700; }
+    .dash-card h2 { font-size: 20px; font-weight: 800; color: var(--accent); }
     .dash-card input {
       width: 100%; text-align: center; background: var(--card); color: var(--text);
-      border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 15px; font-weight: bold;
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px; font-size: 16px; font-weight: bold; outline: none;
     }
 
+    /* İLERLEME ÇUBUĞU (BONUS) */
+    .progress-container { background: var(--input-bg); border-radius: 10px; height: 10px; width: 100%; overflow: hidden; border: 1px solid var(--border); margin-top: 8px; }
+    .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+    .progress-text { font-size: 11px; color: var(--subtext); margin-top: 6px; text-align: right; font-weight: 600; }
+
     /* FORM */
-    .form-group { display: flex; flex-direction: column; gap: 10px; }
+    .form-group { display: flex; flex-direction: column; gap: 12px; }
     .form-group input, .form-group select {
-      width: 100%; padding: 10px 12px; border-radius: 8px;
+      width: 100%; padding: 12px 14px; border-radius: 10px;
       border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 13px; outline: none;
     }
-    .form-row { display: flex; gap: 8px; }
+    .form-row { display: flex; gap: 10px; }
     .form-row select { flex: 1; }
     .form-row input { flex: 2; }
     .btn-primary {
-      width: 100%; padding: 11px; border-radius: 8px; border: none;
+      width: 100%; padding: 12px; border-radius: 10px; border: none;
       background: var(--accent); color: #000; font-weight: bold; font-size: 14px; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); transition: opacity 0.2s;
     }
+    .btn-primary:hover { opacity: 0.9; }
 
     /* GİDER LİSTESİ */
-    .expense-list { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; }
+    .expense-list { display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; }
     .item {
-      background: var(--input-bg); padding: 12px; border-radius: 10px;
+      background: var(--input-bg); padding: 14px; border-radius: 12px;
       display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);
     }
-    .item-title { font-size: 13px; font-weight: 600; }
-    .item-sub { font-size: 11px; color: var(--subtext); margin-top: 2px; }
-    .item-right { text-align: right; display: flex; align-items: center; gap: 6px; }
-    .item-price { font-weight: 700; font-size: 13px; color: var(--accent); }
+    .item-title { font-size: 14px; font-weight: 700; }
+    .item-sub { font-size: 11px; color: var(--subtext); margin-top: 3px; display: flex; gap: 8px; align-items: center; }
     
-    .action-btn { background: none; border: none; font-size: 14px; cursor: pointer; padding: 4px; color: var(--subtext); }
+    /* ÖDEME ROZETİ */
+    .due-badge {
+      font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; display: inline-block;
+    }
+    .due-badge.urgent { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .due-badge.normal { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .due-badge.passed { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+    .item-right { text-align: right; display: flex; align-items: center; gap: 8px; }
+    .item-price { font-weight: 800; font-size: 14px; color: var(--accent); }
+    
+    .action-btn { background: none; border: none; font-size: 14px; cursor: pointer; padding: 4px; color: var(--subtext); transition: color 0.2s; }
     .action-btn:hover { color: var(--text); }
 
     /* TAKVİM GRID */
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; font-size: 11px; }
     .cal-head { font-weight: bold; color: var(--subtext); padding: 4px 0; }
-    .cal-day { background: var(--input-bg); padding: 8px 0; border-radius: 6px; border: 1px solid var(--border); position: relative; }
+    .cal-day { background: var(--input-bg); padding: 8px 0; border-radius: 8px; border: 1px solid var(--border); position: relative; font-weight: 600; }
     .cal-day.has-event::after {
-      content: ''; width: 4px; height: 4px; background: var(--danger); border-radius: 50%; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+      content: ''; width: 5px; height: 5px; background: var(--danger); border-radius: 50%; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
     }
 
-    /* MODERN YAPAY ZEKA (AI) WIDGET */
+    /* AKILLI ASİSTAN WIDGET */
     .chat-toggle {
-      position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+      position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px;
       border-radius: 50%; background: var(--ai-glow); color: #fff; display: flex;
-      align-items: center; justify-content: center; font-size: 22px; cursor: pointer;
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); z-index: 1000;
+      align-items: center; justify-content: center; font-size: 24px; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); z-index: 1000;
       animation: float 3s ease-in-out infinite; transition: transform 0.2s;
     }
     .chat-toggle:hover { transform: scale(1.08); }
@@ -129,33 +150,40 @@
     }
 
     .chat-box {
-      position: fixed; bottom: 90px; right: 24px; width: 350px; height: 480px;
-      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-      display: none; flex-direction: column; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.5); z-index: 1000;
+      position: fixed; bottom: 95px; right: 24px; width: 360px; height: 500px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      display: none; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 1000;
     }
     .chat-head {
-      background: var(--ai-glow); color: #fff; padding: 12px 16px;
-      font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; align-items: center;
+      background: var(--ai-glow); color: #fff; padding: 14px 18px;
+      font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center;
     }
     
-    /* HIZLI KULLANIM BUTONU */
     .chat-actions {
       background: var(--input-bg); padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: center;
     }
     .quick-btn {
       background: var(--card); color: var(--accent); border: 1px solid var(--accent);
-      border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer;
-      transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+      border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
     }
     .quick-btn:hover { background: var(--accent); color: #000; }
 
-    .chat-msgs { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
-    .msg { padding: 9px 13px; border-radius: 10px; max-width: 88%; line-height: 1.4; word-break: break-word; }
+    .chat-msgs { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 12px; }
+    .msg { padding: 10px 14px; border-radius: 12px; max-width: 88%; line-height: 1.4; word-break: break-word; position: relative; }
     .msg.bot { background: var(--input-bg); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
     .msg.user { background: #6366f1; color: #fff; align-self: flex-end; font-weight: 600; }
-    .chat-input { display: flex; padding: 10px; background: var(--input-bg); border-top: 1px solid var(--border); gap: 6px; }
-    .chat-input input { flex: 1; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
-    .chat-input button { padding: 8px 14px; border-radius: 8px; border: none; background: #8b5cf6; color: #fff; font-weight: bold; cursor: pointer; }
+    
+    /* SESLİ OKU BUTONU */
+    .tts-btn {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 10px; margin-top: 6px;
+      color: var(--accent); cursor: pointer; background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border);
+    }
+    .tts-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .chat-input { display: flex; padding: 12px; background: var(--input-bg); border-top: 1px solid var(--border); gap: 8px; }
+    .chat-input input { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
+    .chat-input button { padding: 10px 16px; border-radius: 10px; border: none; background: #6366f1; color: #fff; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body class="theme-default">
@@ -200,6 +228,10 @@
               <h2 id="remainingBudget">0 ₺</h2>
             </div>
           </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="progress-text" id="progressText">Harcama Oranı: %0</div>
         </div>
 
         <div class="card">
@@ -254,7 +286,7 @@
           <h3><i class="fa-solid fa-calculator"></i> Hızlı Döviz Çevirici</h3>
           <div class="form-group">
             <input type="number" id="convertTL" placeholder="TL Miktarı Girin..." oninput="convertCurrency()">
-            <div style="display:flex; justify-content:space-between; font-size:12px; background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <div style="display:flex; justify-size:space-between; font-size:12px; background:var(--input-bg); padding:12px; border-radius:10px; border:1px solid var(--border);">
               <span>Tahmini Dolar: <strong id="resUSD" style="color:var(--accent);">$0.00</strong></span>
               <span style="margin-left:auto;">Tahmini Euro: <strong id="resEUR" style="color:var(--accent);">€0.00</strong></span>
             </div>
@@ -267,21 +299,22 @@
 
   </div>
 
-  <!-- AKILLI AI ASİSTAN WIDGET -->
-  <div class="chat-toggle" onclick="toggleChat()" title="AI Asistan"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+  <!-- AKILLI ASİSTAN WIDGET -->
+  <div class="chat-toggle" onclick="toggleChat()" title="Bütçe Takip Asistanı"><i class="fa-solid fa-robot"></i></div>
   <div class="chat-box" id="chatBox">
     <div class="chat-head">
-      <span><i class="fa-solid fa-sparkles"></i> A.I.A Akıllı Bütçe Asistanı</span>
+      <span><i class="fa-solid fa-robot"></i> Bütçe Takip Asistanı</span>
       <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
     </div>
     
-    <!-- HIZLI SORU BUTONU -->
     <div class="chat-actions">
       <button class="quick-btn" onclick="askUsage()"><i class="fa-solid fa-circle-info"></i> Bu uygulama nasıl kullanılır?</button>
     </div>
 
     <div class="chat-msgs" id="chatMsgs">
-      <div class="msg bot">Merhaba! Ben bütçe ve hesap asistanınız A.I.A. Bana harcamalarınızı, döviz kurlarını sorabilir veya doğrudan hesap yaptırabilirsiniz! ✨</div>
+      <div class="msg bot">
+        Merhaba! Ben Bütçe Takip Asistanı. Bütçeniz, döviz kurları, hesaplamalar veya tarih, coğrafya, hava durumu gibi genel konularda bana her şeyi sorabilirsiniz! ✨
+      </div>
     </div>
     <div class="chat-input">
       <input type="text" id="chatInput" placeholder="Soru sor veya hesap yaptır..." onkeydown="if(event.key==='Enter') sendChat()">
@@ -290,9 +323,9 @@
   </div>
 
   <script>
-    let expenses = JSON.parse(localStorage.getItem('expenses_v4')) || [];
-    let budget = localStorage.getItem('budget_v4') || 0;
-    let activeTheme = localStorage.getItem('theme_v4') || 'theme-default';
+    let expenses = JSON.parse(localStorage.getItem('expenses_v5')) || [];
+    let budget = localStorage.getItem('budget_v5') || 0;
+    let activeTheme = localStorage.getItem('theme_v5') || 'theme-default';
     let liveRates = { USD: 34.50, EUR: 37.20, GOLD: 3025.00 };
     let chartInstance = null;
 
@@ -302,13 +335,35 @@
 
     function changeTheme(theme) {
       document.body.className = theme;
-      localStorage.setItem('theme_v4', theme);
+      localStorage.setItem('theme_v5', theme);
     }
 
     function updateBudget(val) {
       budget = Number(val);
-      localStorage.setItem('budget_v4', budget);
+      localStorage.setItem('budget_v5', budget);
       render();
+    }
+
+    /* TİK SESİ EFEKTİ (Web Audio API) */
+    function playTickSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.08);
+
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (e) {}
     }
 
     async function fetchLiveRates() {
@@ -343,6 +398,7 @@
       document.getElementById('amount').value = '';
       document.getElementById('payDay').value = '';
 
+      playTickSound();
       saveAndRender();
     }
 
@@ -352,7 +408,7 @@
     }
 
     function saveAndRender() {
-      localStorage.setItem('expenses_v4', JSON.stringify(expenses));
+      localStorage.setItem('expenses_v5', JSON.stringify(expenses));
       render();
     }
 
@@ -370,6 +426,23 @@
       link.click();
     }
 
+    /* KAÇ GÜN KALDI HESAPLAMA MANTIĞI */
+    function getRemainingDaysText(payDay) {
+      const today = new Date();
+      const currentDay = today.getDate();
+      const targetDay = Number(payDay);
+
+      let diff = targetDay - currentDay;
+
+      if (diff === 0) {
+        return `<span class="due-badge urgent">Bugün Son!</span>`;
+      } else if (diff > 0) {
+        return `<span class="due-badge ${diff <= 3 ? 'urgent' : 'normal'}">${diff} gün kaldı</span>`;
+      } else {
+        return `<span class="due-badge passed">${Math.abs(diff)} gün geçti</span>`;
+      }
+    }
+
     function render() {
       const list = document.getElementById('expenseList');
       list.innerHTML = '';
@@ -381,11 +454,15 @@
         if (item.currency === '€') itemTL *= liveRates.EUR;
         totalTL += itemTL;
 
+        const dueHtml = getRemainingDaysText(item.payDay);
+
         list.innerHTML += `
           <div class="item">
             <div>
               <div class="item-title">${item.title}</div>
-              <div class="item-sub">Her ayın ${item.payDay}. günü • ${item.category}</div>
+              <div class="item-sub">
+                Her ayın ${item.payDay}. günü • ${dueHtml}
+              </div>
             </div>
             <div class="item-right">
               <span class="item-price">${item.amount} ${item.currency}</span>
@@ -400,6 +477,12 @@
       const remEl = document.getElementById('remainingBudget');
       remEl.innerText = `${Math.round(remaining).toLocaleString('tr-TR')} ₺`;
       remEl.style.color = remaining < 0 ? 'var(--danger)' : 'var(--accent)';
+
+      // İlerleme Çubuğu Güncelleme
+      const percent = budget > 0 ? Math.min(100, Math.round((totalTL / budget) * 100)) : 0;
+      document.getElementById('progressBar').style.width = `${percent}%`;
+      document.getElementById('progressBar').style.background = percent > 90 ? 'var(--danger)' : 'var(--accent)';
+      document.getElementById('progressText').innerText = `Harcama Oranı: %${percent}`;
 
       renderChart();
       renderCalendar();
@@ -447,7 +530,7 @@
       document.getElementById('resEUR').innerText = `€${(tl / liveRates.EUR).toFixed(2)}`;
     }
 
-    /* AKILLI ASİSTAN MANTIĞI */
+    /* AKILLI ASİSTAN MANTIĞI & GENİŞ KAPSAMLI YANITLAR */
     function toggleChat() {
       const box = document.getElementById('chatBox');
       box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
@@ -458,6 +541,20 @@
       setTimeout(() => {
         addMsg(getUsageGuide(), 'bot');
       }, 300);
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        // Emoji ve özel simgeleri temizleyerek oku
+        const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'tr-TR';
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("Tarayıcınız sesli okuma özelliğini desteklemiyor.");
+      }
     }
 
     function sendChat() {
@@ -482,34 +579,52 @@
     }
 
     function getUsageGuide() {
-      return "📌 Uygulama Kullanım Rehberi:\n\n" +
-             "1️⃣ Bütçe Belirleme: 'Aylık Gelir' alanına maaş/gelirini gir.\n" +
-             "2️⃣ Gider Ekleme: Fatura, abonelik veya borçlarını tutar ve ödeme günüyle kaydet.\n" +
-             "3️⃣ Takvim & Hatırlatıcı: Yanındaki takvim simgesiyle ödemelerini telefon/bilgisayar takvimine aktar.\n" +
-             "4️⃣ Canlı Kurlar: USD, EUR ve Altın kurlarını anlık takip et.\n" +
-             "5️⃣ Asistan: Bana 'Kalan bütçem ne?', 'Dolar ne kadar?' sorabilir ya da '450 + 1200' gibi matematik işlemleri yaptırabilirsin!";
+      return "📌 Bütçe Takip Rehberi:\n\n" +
+             "1️⃣ Bütçe Gir: 'Aylık Gelir' kutusuna toplam gelirini yaz.\n" +
+             "2️⃣ Gider Ekle: Gider adı, tutarı ve ödeme gününü girip kaydet.\n" +
+             "3️⃣ Takip Et: Ödemene kaç gün kaldığını liste rozetlerinden takip et.\n" +
+             "4️⃣ Takvime Aktar: Takvim ikonuyla hatırları telefonuna indir.\n" +
+             "5️⃣ Genel Sorular: Bana bütçenin yanında tarih, coğrafya, hava durumu veya matematik soruları da sorabilirsin!";
     }
 
     function processSmartReply(query, totalGiderTL) {
       let q = query.toLowerCase().trim();
       let rem = budget - totalGiderTL;
 
-      // 1. Teşekkürler / Rica
+      // 1. Teşekkürler / Selamlaşma
       if (q.includes('teşekkür') || q.includes('tesekkur') || q.includes('sağol') || q.includes('sagol') || q.includes('eyvallah')) {
-        return "Rica ederim! Her zaman yardımcı olmaya hazırım. Başka bir sorunuz var mı?";
+        return "Rica ederim! Yardımcı olabildiysem ne mutlu bana. Başka bir sorun var mı?";
       }
 
-      // 2. Kullanım & Amaç
-      if (q.includes('nasıl kullanılır') || q.includes('nasil kullanilir') || q.includes('amaç') || q.includes('amac') || q.includes('ne işe yarar')) {
+      if (q.includes('merhaba') || q.includes('selam') || q.includes('naber') || q.includes('nasılsın') || q.includes('nasilsin')) {
+        return "Selamlar! Bütçenle ilgili bilgi almak, döviz öğrenmek veya genel kültür/tarih gibi konularda sohbet etmek için buradayım!";
+      }
+
+      // 2. Kullanım Rehberi
+      if (q.includes('nasıl kullanılır') || q.includes('nasil kullanilir') || q.includes('amaç') || q.includes('ne işe yarar')) {
         return getUsageGuide();
       }
 
-      // 3. Selamlaşma
-      if (q.includes('merhaba') || q.includes('selam') || q.includes('naber') || q.includes('nasılsın') || q.includes('nasilsin')) {
-        return "Selamlar! Bütçeniz, ödemeleriniz veya kurlar hakkında size nasıl yardımcı olabilirim?";
+      // 3. Tarih Soruları
+      if (q.includes('tarih') || q.includes('istanbul ne zaman fethetdildi') || q.includes('fetih') || q.includes('cumhuriyet')) {
+        if (q.includes('istanbul') || q.includes('fetih')) return "İstanbul, 29 Mayıs 1453 tarihinde Fatih Sultan Mehmet tarafından fethedilmiştir.";
+        if (q.includes('cumhuriyet')) return "Türkiye Cumhuriyeti, 29 Ekim 1923 tarihinde ilan edilmiştir.";
+        return "Tarih ile ilgili merak ettiğin spesifik bir olayı veya yılı sorabilirsin!";
       }
 
-      // 4. Matematiksel Hesaplama Kontrolü
+      // 4. Coğrafya Soruları
+      if (q.includes('coğrafya') || q.includes('başkent') || q.includes('dağ') || q.includes('nehir') || q.includes('en yüksek')) {
+        if (q.includes('türkiye') && q.includes('başkent')) return "Türkiye'nin başkenti Ankara'dır.";
+        if (q.includes('en yüksek')) return "Türkiye'nin en yüksek dağı 5.137 metre yüksekliğiyle Ağrı Dağı'dır.";
+        return "Coğrafya hakkında öğrenmek istediğin ülkeyi, şehri veya dağ/nehir bilgisini sorabilirsin!";
+      }
+
+      // 5. Hava Durumu Tahminleri
+      if (q.includes('hava') || q.includes('yağmur') || q.includes('derece') || q.includes('hava durumu')) {
+        return "Anlık bölgesel hava durumu verileri için konumsal bilgiye ihtiyacım var ancak mevsim normallerine göre adımlarını atmayı ve tedbirli olmayı unutma! ☀️🌧️";
+      }
+
+      // 6. Matematiksel Hesaplama
       if (/[\d\+\-\*\/\.]/.test(q) && (q.includes('+') || q.includes('-') || q.includes('*') || q.includes('/') || q.includes('topla'))) {
         try {
           let mathExpr = q.replace(/[^0-9\+\-\*\/\.]/g, '');
@@ -520,7 +635,7 @@
         } catch (e) {}
       }
 
-      // 5. Kalan / Bütçe Durumu
+      // 7. Kalan / Bütçe Durumu
       if (q.includes('kalan') || q.includes('bütçe') || q.includes('butce') || q.includes('cebimde') || q.includes('para var')) {
         if (budget == 0) {
           return "Henüz bir aylık gelir girmediniz. 'Aylık Gelir' kutusuna bütçenizi yazarsanız net kalan parayı hesaplayabilirim.";
@@ -528,28 +643,35 @@
         return `Aylık gelirin ${budget} TL. Toplam harcaman ${Math.round(totalGiderTL)} TL. Cebine kalan net tutar: ${Math.round(rem)} TL.`;
       }
 
-      // 6. Harcama ve Gider Detayları
+      // 8. Gider Detayları
       if (q.includes('gider') || q.includes('harcama') || q.includes('ne kadar harcadım')) {
-        if (expenses.length === 0) {
-          return "Şu an eklenmiş hiç gider kaydınız bulunmuyor.";
-        }
+        if (expenses.length === 0) return "Şu an eklenmiş hiç gider kaydınız bulunmuyor.";
         return `Şu ana kadar eklediğiniz ${expenses.length} adet giderin toplam tutarı: ${Math.round(totalGiderTL)} TL.`;
       }
 
-      // 7. Döviz ve Altın Kurları
+      // 9. Döviz ve Altın Kurları
       if (q.includes('döviz') || q.includes('dolar') || q.includes('euro') || q.includes('kur') || q.includes('altın')) {
         return `Güncel Anlık Kurlar:\n• USD: ${liveRates.USD.toFixed(2)} TL\n• EUR: ${liveRates.EUR.toFixed(2)} TL\n• Gram Altın: ${liveRates.GOLD.toFixed(2)} TL`;
       }
 
-      // 8. Esnek Cevap
-      return `"${query}" sorunuzu tam anlayamadım. Bütçe kalanınızı sorabilir, döviz kurlarını öğrenebilir ya da "Bu uygulama nasıl kullanılır?" butonuna tıklayabilirsiniz!`;
+      // 10. Genel Cevap Mekanizması
+      return `"${query}" hakkında ne öğrenmek istediğini tam anlayamadım. Bütçeni sorabilir, "250 + 400" gibi hesap yaptırabilir ya da tarih/coğrafya soruları sorabilirsin!`;
     }
 
     function addMsg(text, sender) {
       const msgs = document.getElementById('chatMsgs');
       const div = document.createElement('div');
       div.className = `msg ${sender}`;
-      div.innerText = text;
+      
+      let htmlContent = text.replace(/\n/g, '<br>');
+      
+      // Bot cevaplarına sesli oku butonu ekle
+      if (sender === 'bot') {
+        div.innerHTML = `${htmlContent}<br><button class="tts-btn" onclick="speakText('${text.replace(/'/g, "\\'")}')"><i class="fa-solid fa-volume-high"></i> Sesli Oku</button>`;
+      } else {
+        div.innerHTML = htmlContent;
+      }
+
       msgs.appendChild(div);
       msgs.scrollTop = msgs.scrollHeight;
     }
