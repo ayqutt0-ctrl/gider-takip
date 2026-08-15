@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cebimdeki Giderler Ultra Pro</title>
+  <title>Cebimdeki Giderler Ultra Pro v3</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
@@ -33,7 +33,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-top: 30px; padding-bottom: 60px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-top: 24px; padding-bottom: 60px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
     
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .header h1 { font-size: 20px; font-weight: 700; color: var(--accent); }
@@ -47,6 +47,14 @@
     .theme-select {
       background: var(--card); color: var(--text); border: 1px solid var(--border);
       padding: 6px 10px; border-radius: 8px; font-size: 12px; outline: none;
+    }
+
+    /* KRİTİK UYARI BANTLARI */
+    .urgent-banner {
+      background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger);
+      color: var(--danger); padding: 10px 14px; border-radius: 12px;
+      font-size: 12px; font-weight: bold; margin-bottom: 14px; display: none;
+      align-items: center; gap: 8px;
     }
 
     /* KULLANIM KILAVUZU KUTUSU */
@@ -82,6 +90,11 @@
       border: 1px solid var(--border); border-radius: 8px; padding: 4px; font-size: 16px; font-weight: bold; margin-top: 2px;
     }
 
+    /* BÜTÇE SAĞLIK SKORU */
+    .health-badge {
+      display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; margin-top: 4px;
+    }
+
     /* ÖDEME İLERLEME ÇUBUĞU */
     .progress-box { background: var(--card); padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 16px; }
     .progress-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; font-weight: 600; }
@@ -111,10 +124,10 @@
       background: var(--accent); color: #000; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 4px;
     }
 
-    /* FİLTRE VE ARAMA */
-    .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; }
-    .filter-bar input { flex: 2; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 13px; outline: none; }
-    .filter-bar select { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
+    /* FİLTRE VE SIRALAMA */
+    .filter-bar { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .filter-bar input { flex: 2; min-width: 120px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
+    .filter-bar select { flex: 1; min-width: 100px; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 11px; outline: none; }
 
     /* LİSTE */
     .item {
@@ -173,6 +186,11 @@
     </div>
   </div>
 
+  <!-- KRİTİK YAKLAŞAN ÖDEME BİLDİRİM BANNER'I -->
+  <div class="urgent-banner" id="urgentBanner">
+    🚨 <span>Yaklaşan veya son günü gelmiş ödemeleriniz var!</span>
+  </div>
+
   <!-- NASIL KULLANILIR PENCERESİ -->
   <div class="guide-box" id="guideBox">
     <h3>❓ Nasıl Kullanılır? (Kısa Rehber)</h3>
@@ -199,6 +217,7 @@
     <div class="dash-card">
       <p>Aylık Gelir / Bütçe</p>
       <input type="number" id="monthlyBudget" placeholder="0 ₺" onchange="updateBudget(this.value)">
+      <div id="healthBadge"></div>
     </div>
     <div class="dash-card">
       <p>Cebime Kalan</p>
@@ -257,9 +276,9 @@
     <button onclick="addExpense()">Gideri Listeye Ekle</button>
   </div>
 
-  <!-- Arama ve Filtreleme -->
+  <!-- Arama, Filtreleme ve Sıralama -->
   <div class="filter-bar">
-    <input type="text" id="searchInput" placeholder="Giderlerde ara..." oninput="render()">
+    <input type="text" id="searchInput" placeholder="Gider ara..." oninput="render()">
     <select id="categoryFilter" onchange="render()">
       <option value="ALL">Tüm Kategoriler</option>
       <option value="🎵 Abonelik">🎵 Abonelikler</option>
@@ -267,6 +286,11 @@
       <option value="🎓 Eğitim & Borç">🎓 Eğitim & Borç</option>
       <option value="🏍️ Araç & Bakım">🏍️ Araç & Bakım</option>
       <option value="💳 Taksit & Diğer">💳 Taksit & Diğer</option>
+    </select>
+    <select id="sortSelect" onchange="render()">
+      <option value="day">📅 Ödeme Günü</option>
+      <option value="amountDesc">💰 Tutar (Yüksek)</option>
+      <option value="amountAsc">💸 Tutar (Düşük)</option>
     </select>
   </div>
   
@@ -351,19 +375,31 @@
       const chartContent = document.getElementById('chartContent');
       const progressFill = document.getElementById('progressFill');
       const progressText = document.getElementById('progressText');
+      const healthBadge = document.getElementById('healthBadge');
+      const urgentBanner = document.getElementById('urgentBanner');
       
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
       const filterCat = document.getElementById('categoryFilter').value;
+      const sortBy = document.getElementById('sortSelect').value;
 
       list.innerHTML = '';
       let totalTLValue = 0;
       let paidTLValue = 0;
       let totalsOriginal = { '₺': 0, '$': 0, '€': 0 };
       let categoryTotals = {};
+      let urgentCount = 0;
 
+      // SIRALAMA ALGORİTMASI
       expenses.sort((a, b) => {
         if (a.paid !== b.paid) return a.paid ? 1 : -1;
-        return getDaysLeft(a.payDay) - getDaysLeft(b.payDay);
+        
+        if (sortBy === 'amountDesc') {
+          return Number(b.amount) - Number(a.amount);
+        } else if (sortBy === 'amountAsc') {
+          return Number(a.amount) - Number(b.amount);
+        } else {
+          return getDaysLeft(a.payDay) - getDaysLeft(b.payDay);
+        }
       });
 
       expenses.forEach((item) => {
@@ -377,7 +413,19 @@
         if (item.paid) paidTLValue += itemTL;
 
         categoryTotals[item.category] = (categoryTotals[item.category] || 0) + itemTL;
+
+        if (!item.paid && getDaysLeft(item.payDay) <= 3) {
+          urgentCount++;
+        }
       });
+
+      // Kritik Bildirim Bandı Kontrolü
+      if (urgentCount > 0) {
+        urgentBanner.style.display = 'flex';
+        urgentBanner.querySelector('span').innerText = `Ödemesi yaklaşan veya son günü gelmiş ${urgentCount} gideriniz var!`;
+      } else {
+        urgentBanner.style.display = 'none';
+      }
 
       expenses.forEach((item, index) => {
         const matchesSearch = item.title.toLowerCase().includes(searchVal);
@@ -431,6 +479,20 @@
       const netRemaining = budget - totalTLValue;
       remainingEl.innerText = `${Math.round(netRemaining).toLocaleString('tr-TR')} ₺`;
       remainingEl.style.color = netRemaining < 0 ? 'var(--danger)' : 'var(--accent)';
+
+      // FINANSAL SAĞLIK SKORU
+      if (budget > 0) {
+        const ratio = (totalTLValue / budget) * 100;
+        if (ratio <= 40) {
+          healthBadge.innerHTML = '<span class="health-badge" style="background:rgba(16,185,129,0.2); color:var(--success);">🟢 Durum Harika (%' + Math.round(ratio) + ')</span>';
+        } else if (ratio <= 70) {
+          healthBadge.innerHTML = '<span class="health-badge" style="background:rgba(245,158,11,0.2); color:var(--warning);">🟡 Makul Seviye (%' + Math.round(ratio) + ')</span>';
+        } else {
+          healthBadge.innerHTML = '<span class="health-badge" style="background:rgba(239,68,68,0.2); color:var(--danger);">🔴 Yüksek Sabit Gider (%' + Math.round(ratio) + ')</span>';
+        }
+      } else {
+        healthBadge.innerHTML = '';
+      }
 
       const percentPaid = totalTLValue > 0 ? Math.round((paidTLValue / totalTLValue) * 100) : 0;
       progressFill.style.width = `${percentPaid}%`;
