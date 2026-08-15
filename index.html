@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cebimdeki Giderler</title>
-  <!-- Apple cihazlarda tam ekran uygulama gibi çalışması için -->
+  <title>Cebimdeki Giderler Pro</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
@@ -15,101 +14,217 @@
       --text: #f8fafc;
       --subtext: #94a3b8;
       --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 20px; padding-top: 50px; min-height: 100vh; }
-    .header { text-align: center; margin-bottom: 24px; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-top: 50px; padding-bottom: 60px; min-height: 100vh; }
+    
+    .header { text-align: center; margin-bottom: 20px; }
     .header h1 { font-size: 22px; font-weight: 700; color: var(--accent); }
     
     .total-card {
       background: linear-gradient(135deg, #0284c7, #0369a1);
-      padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 24px;
+      padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px;
       box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.4);
     }
-    .total-card p { font-size: 14px; opacity: 0.9; }
-    .total-card h2 { font-size: 32px; font-weight: 800; margin-top: 4px; }
+    .total-card p { font-size: 13px; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; }
+    .total-card h2 { font-size: 30px; font-weight: 800; margin-top: 4px; }
+    .total-breakdown { font-size: 12px; opacity: 0.85; margin-top: 6px; }
 
-    .form-group { background: var(--card); padding: 16px; border-radius: 16px; margin-bottom: 24px; }
+    .form-group { background: var(--card); padding: 16px; border-radius: 16px; margin-bottom: 24px; border: 1px solid #334155; }
+    .form-group h3 { font-size: 15px; margin-bottom: 12px; color: var(--accent); }
     .form-group input, .form-group select {
       width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px;
       border: 1px solid #334155; background: #0f172a; color: white; font-size: 14px; outline: none;
     }
+    .form-row { display: flex; gap: 8px; }
+    .form-row select { flex: 1; }
+    .form-row input { flex: 2; }
     .form-group button {
       width: 100%; padding: 12px; border-radius: 10px; border: none;
-      background: var(--accent); color: #0f172a; font-weight: bold; font-size: 15px; cursor: pointer;
+      background: var(--accent); color: #0f172a; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 4px;
     }
 
-    .list-title { font-size: 16px; margin-bottom: 12px; color: var(--subtext); }
+    .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .list-title { font-size: 15px; color: var(--subtext); font-weight: 600; }
+    
     .item {
-      background: var(--card); padding: 14px 16px; border-radius: 12px; margin-bottom: 10px;
+      background: var(--card); padding: 14px; border-radius: 14px; margin-bottom: 10px;
       display: flex; justify-content: space-between; align-items: center;
+      border-left: 4px solid var(--accent); transition: all 0.2s ease;
     }
-    .item-info h4 { font-size: 15px; font-weight: 600; }
-    .item-info p { font-size: 12px; color: var(--subtext); margin-top: 2px; }
-    .item-price { font-weight: 700; font-size: 15px; color: #38bdf8; }
-    .delete-btn { background: none; border: none; color: var(--danger); font-size: 18px; margin-left: 12px; cursor: pointer; }
+    .item.warning { border-left-color: var(--warning); }
+    .item.urgent { border-left-color: var(--danger); }
+    .item.paid { opacity: 0.5; border-left-color: var(--success); filter: grayscale(0.6); }
+    .item.paid .item-title { text-decoration: line-through; }
+
+    .item-left { display: flex; align-items: center; gap: 12px; }
+    .item-icon { font-size: 22px; background: #0f172a; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+    .item-title { font-size: 15px; font-weight: 600; }
+    .item-sub { font-size: 12px; color: var(--subtext); margin-top: 2px; }
+    
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: bold; margin-left: 4px; }
+    .badge-urgent { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+    
+    .item-right { text-align: right; display: flex; align-items: center; gap: 8px; }
+    .item-price { font-weight: 700; font-size: 15px; color: var(--accent); }
+    
+    .action-btn { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px; }
+    .check-btn { color: var(--success); }
+    .delete-btn { color: var(--danger); }
+
+    .backup-section { display: flex; gap: 10px; margin-top: 24px; }
+    .backup-btn {
+      flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #334155;
+      background: var(--card); color: var(--subtext); font-size: 12px; cursor: pointer; text-align: center;
+    }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1>Gider Takipçisi</h1>
+    <h1>Cebimdeki Giderler</h1>
   </div>
 
   <div class="total-card">
     <p>Aylık Toplam Sabit Gider</p>
-    <h2 id="totalAmount">0 ₺</h2>
+    <h2 id="totalAmountTL">0 ₺</h2>
+    <div class="total-breakdown" id="totalBreakdown"></div>
   </div>
 
   <div class="form-group">
-    <input type="text" id="title" placeholder="Abonelik / Gider Adı (örn. Spotify, KYK)">
-    <input type="number" id="amount" placeholder="Tutar (₺)">
-    <input type="number" id="payDay" placeholder="Ödeme Günü (Ayın 1 - 31'i arası)" min="1" max="31">
-    <button onclick="addExpense()">Gider Ekle</button>
+    <h3>Yeni Gider Ekle</h3>
+    <input type="text" id="title" placeholder="Gider Adı (örn. Spotify, KYK, İnternet)">
+    
+    <div class="form-row">
+      <select id="currency">
+        <option value="₺">₺ (TL)</option>
+        <option value="$">$ (USD)</option>
+        <option value="€">€ (EUR)</option>
+      </select>
+      <input type="number" id="amount" placeholder="Tutar">
+    </div>
+
+    <div class="form-row">
+      <select id="category">
+        <option value="🎵 Abonelik">🎵 Abonelikler</option>
+        <option value="🏠 Ev & Fatura">🏠 Ev & Fatura</option>
+        <option value="🎓 Eğitim & Borç">🎓 Eğitim & Borç</option>
+        <option value="🏍️ Araç & Bakım">🏍️ Araç & Bakım</option>
+        <option value="💳 Taksit & Diğer">💳 Taksit & Diğer</option>
+      </select>
+      <input type="number" id="payDay" placeholder="Ödeme Günü (1 - 31)" min="1" max="31">
+    </div>
+
+    <button onclick="addExpense()">Gideri Listeye Ekle</button>
   </div>
 
-  <div class="list-title">Kayıtlı Sabit Giderler</div>
+  <div class="list-header">
+    <div class="list-title">Kayıtlı Sabit Giderler</div>
+    <div style="font-size: 11px; color: var(--subtext);" id="itemCount">0 Kalem</div>
+  </div>
+  
   <div id="expenseList"></div>
 
+  <div class="backup-section">
+    <button class="backup-btn" onclick="exportData()">📥 Verileri Yedekle (İndir)</button>
+    <button class="backup-btn" onclick="document.getElementById('importFile').click()">📤 Yedeği Yükle</button>
+    <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+  </div>
+
   <script>
-    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    let expenses = JSON.parse(localStorage.getItem('expenses_v2')) || [];
+
+    // Ayın kaçıncı günü olduğunu alır
+    const today = new Date().getDate();
+
+    function getDaysLeft(payDay) {
+      if (payDay >= today) {
+        return payDay - today;
+      } else {
+        // Gelecek ayın ödemesi
+        return (30 - today) + Number(payDay);
+      }
+    }
 
     function render() {
       const list = document.getElementById('expenseList');
-      const totalEl = document.getElementById('totalAmount');
-      list.innerHTML = '';
+      const totalTL = document.getElementById('totalAmountTL');
+      const totalBreakdown = document.getElementById('totalBreakdown');
+      const countEl = document.getElementById('itemCount');
       
-      let total = 0;
-      expenses.sort((a, b) => a.payDay - b.payDay);
+      list.innerHTML = '';
+      let totals = { '₺': 0, '$': 0, '€': 0 };
+
+      // Kalan güne göre sırala (Ödenmemişler üste, ödenenler alta)
+      expenses.sort((a, b) => {
+        if (a.paid !== b.paid) return a.paid ? 1 : -1;
+        return getDaysLeft(a.payDay) - getDaysLeft(b.payDay);
+      });
 
       expenses.forEach((item, index) => {
-        total += Number(item.amount);
+        totals[item.currency] += Number(item.amount);
+        
+        const daysLeft = getDaysLeft(item.payDay);
+        let statusClass = '';
+        let badge = '';
+
+        if (item.paid) {
+          statusClass = 'paid';
+        } else if (daysLeft === 0) {
+          statusClass = 'urgent';
+          badge = '<span class="badge badge-urgent">BUGÜN!</span>';
+        } else if (daysLeft <= 3) {
+          statusClass = 'warning';
+          badge = `<span class="badge badge-warning">${daysLeft} gün kaldı</span>`;
+        }
+
+        const icon = item.category ? item.category.split(' ')[0] : '💳';
+
         list.innerHTML += `
-          <div class="item">
-            <div class="item-info">
-              <h4>${item.title}</h4>
-              <p>Her ayın ${item.payDay}. günü</p>
+          <div class="item ${statusClass}">
+            <div class="item-left">
+              <div class="item-icon">${icon}</div>
+              <div>
+                <div class="item-title">${item.title} ${badge}</div>
+                <div class="item-sub">Her ayın ${item.payDay}. günü • ${item.category.split(' ')[1] || 'Gider'}</div>
+              </div>
             </div>
-            <div style="display:flex; align-items:center;">
-              <span class="item-price">${item.amount} ₺</span>
-              <button class="delete-btn" onclick="deleteExpense(${index})">✕</button>
+            <div class="item-right">
+              <span class="item-price">${item.amount} ${item.currency}</span>
+              <button class="action-btn check-btn" onclick="togglePaid(${index})">${item.paid ? '↩️' : '✓'}</button>
+              <button class="action-btn delete-btn" onclick="deleteExpense(${index})">✕</button>
             </div>
           </div>
         `;
       });
 
-      totalEl.innerText = `${total.toLocaleString('tr-TR')} ₺`;
-      localStorage.setItem('expenses', JSON.stringify(expenses));
+      // Toplam Hesapları Göster
+      totalTL.innerText = `${totals['₺'].toLocaleString('tr-TR')} ₺`;
+      
+      let subTotals = [];
+      if (totals['$'] > 0) subTotals.push(`${totals['$']} $`);
+      if (totals['€'] > 0) subTotals.push(`${totals['€']} €`);
+      
+      totalBreakdown.innerText = subTotals.length > 0 ? `+ Yabancı Para: ${subTotals.join(' | ')}` : '';
+      countEl.innerText = `${expenses.length} Kalem Gider`;
+
+      localStorage.setItem('expenses_v2', JSON.stringify(expenses));
     }
 
     function addExpense() {
       const title = document.getElementById('title').value;
       const amount = document.getElementById('amount').value;
+      const currency = document.getElementById('currency').value;
+      const category = document.getElementById('category').value;
       const payDay = document.getElementById('payDay').value;
 
-      if(!title || !amount || !payDay) return alert('Lütfen tüm alanları doldurun!');
+      if(!title || !amount || !payDay) return alert('Lütfen başlık, tutar ve ödeme gününü girin!');
 
-      expenses.push({ title, amount, payDay });
+      expenses.push({ title, amount, currency, category, payDay, paid: false });
+      
       document.getElementById('title').value = '';
       document.getElementById('amount').value = '';
       document.getElementById('payDay').value = '';
@@ -117,9 +232,40 @@
       render();
     }
 
-    function deleteExpense(index) {
-      expenses.splice(index, 1);
+    function togglePaid(index) {
+      expenses[index].paid = !expenses[index].paid;
       render();
+    }
+
+    function deleteExpense(index) {
+      if(confirm('Bu gideri silmek istediğinize emin misiniz?')) {
+        expenses.splice(index, 1);
+        render();
+      }
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(expenses));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "giderlerim_yedek.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importData(event) {
+      const fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        try {
+          expenses = JSON.parse(e.target.result);
+          render();
+          alert('Yedek başarıyla yüklendi!');
+        } catch(err) {
+          alert('Geçersiz yedek dosyası!');
+        }
+      };
+      fileReader.readAsText(event.target.files[0]);
     }
 
     render();
