@@ -3,76 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cebimdeki Giderler Pro</title>
+  <title>Cebimdeki Giderler Ultra Pro</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
+    /* TEMALAR */
+    body.theme-default {
+      --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc;
+      --subtext: #94a3b8; --input-bg: #0f172a; --border: #334155;
+    }
+    body.theme-dark {
+      --bg: #000000; --card: #121212; --accent: #00adb5; --text: #eeeeee;
+      --subtext: #888888; --input-bg: #1e1e1e; --border: #2a2a2a;
+    }
+    body.theme-light {
+      --bg: #f1f5f9; --card: #ffffff; --accent: #0284c7; --text: #0f172a;
+      --subtext: #64748b; --input-bg: #f8fafc; --border: #cbd5e1;
+    }
+    body.theme-gray {
+      --bg: #222831; --card: #393e46; --accent: #00adb5; --text: #eeeeee;
+      --subtext: #929aab; --input-bg: #222831; --border: #4b525d;
+    }
+
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --subtext: #94a3b8;
       --danger: #ef4444;
       --warning: #f59e0b;
       --success: #10b981;
-      --info: #3b82f6;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-top: 50px; padding-bottom: 60px; min-height: 100vh; }
-    
-    .header { text-align: center; margin-bottom: 20px; }
-    .header h1 { font-size: 22px; font-weight: 700; color: var(--accent); }
-    
-    .total-card {
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px;
-      box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.4);
-    }
-    .total-card p { font-size: 13px; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; }
-    .total-card h2 { font-size: 30px; font-weight: 800; margin-top: 4px; }
-    .total-breakdown { font-size: 12px; opacity: 0.85; margin-top: 6px; }
 
-    .form-group { background: var(--card); padding: 16px; border-radius: 16px; margin-bottom: 24px; border: 1px solid #334155; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-top: 40px; padding-bottom: 60px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .header h1 { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .theme-select {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      padding: 6px 10px; border-radius: 8px; font-size: 12px; outline: none;
+    }
+
+    /* BÜTÇE & SAYAÇ KARTI */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .dash-card {
+      background: var(--card); padding: 14px; border-radius: 14px; border: 1px solid var(--border); text-align: center;
+    }
+    .dash-card p { font-size: 11px; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; }
+    .dash-card h2 { font-size: 20px; font-weight: 800; color: var(--accent); }
+    .dash-card input {
+      width: 100%; text-align: center; background: var(--input-bg); color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px; padding: 4px; font-size: 16px; font-weight: bold; margin-top: 2px;
+    }
+
+    /* GRAFİK BÖLÜMÜ */
+    .chart-box { background: var(--card); padding: 16px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
+    .chart-box h3 { font-size: 14px; color: var(--subtext); margin-bottom: 12px; }
+    .bar-item { margin-bottom: 10px; }
+    .bar-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+    .bar-track { background: var(--input-bg); height: 8px; border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.4s ease; }
+
+    /* FORM */
+    .form-group { background: var(--card); padding: 16px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border); }
     .form-group h3 { font-size: 15px; margin-bottom: 12px; color: var(--accent); }
     .form-group input, .form-group select {
       width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px;
-      border: 1px solid #334155; background: #0f172a; color: white; font-size: 14px; outline: none;
+      border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none;
     }
     .form-row { display: flex; gap: 8px; }
     .form-row select { flex: 1; }
     .form-row input { flex: 2; }
     .form-group button {
       width: 100%; padding: 12px; border-radius: 10px; border: none;
-      background: var(--accent); color: #0f172a; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 4px;
+      background: var(--accent); color: #000; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 4px;
     }
 
-    .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .list-title { font-size: 15px; color: var(--subtext); font-weight: 600; }
-    
+    /* FİLTRE VE ARAMA */
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; }
+    .filter-bar input { flex: 2; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 13px; outline: none; }
+    .filter-bar select { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
+
+    /* LİSTE */
     .item {
       background: var(--card); padding: 14px; border-radius: 14px; margin-bottom: 10px;
       display: flex; justify-content: space-between; align-items: center;
-      border-left: 4px solid var(--accent); transition: all 0.2s ease;
+      border-left: 4px solid var(--accent); border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      transition: all 0.2s ease;
     }
-    .item.info { border-left-color: var(--info); }
     .item.warning { border-left-color: var(--warning); }
     .item.urgent { border-left-color: var(--danger); }
-    .item.paid { opacity: 0.5; border-left-color: var(--success); filter: grayscale(0.6); }
+    .item.paid { opacity: 0.4; border-left-color: var(--success); filter: grayscale(0.8); }
     .item.paid .item-title { text-decoration: line-through; }
 
     .item-left { display: flex; align-items: center; gap: 12px; }
-    .item-icon { font-size: 22px; background: #0f172a; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
-    .item-title { font-size: 15px; font-weight: 600; }
-    .item-sub { font-size: 12px; color: var(--subtext); margin-top: 2px; }
+    .item-icon { font-size: 20px; background: var(--input-bg); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+    .item-title { font-size: 14px; font-weight: 600; }
+    .item-sub { font-size: 11px; color: var(--subtext); margin-top: 2px; }
     
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-left: 6px; }
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: bold; margin-left: 4px; }
     .badge-urgent { background: rgba(239, 68, 68, 0.25); color: var(--danger); }
     .badge-warning { background: rgba(245, 158, 11, 0.25); color: var(--warning); }
-    .badge-info { background: rgba(59, 130, 246, 0.25); color: var(--accent); }
+    .badge-info { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
     
     .item-right { text-align: right; display: flex; align-items: center; gap: 8px; }
-    .item-price { font-weight: 700; font-size: 15px; color: var(--accent); }
+    .item-price { font-weight: 700; font-size: 14px; color: var(--accent); }
     
     .action-btn { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px; }
     .check-btn { color: var(--success); }
@@ -80,23 +112,47 @@
 
     .backup-section { display: flex; gap: 10px; margin-top: 24px; }
     .backup-btn {
-      flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #334155;
+      flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
       background: var(--card); color: var(--subtext); font-size: 12px; cursor: pointer; text-align: center;
     }
   </style>
 </head>
-<body>
+<body class="theme-default">
 
   <div class="header">
     <h1>Cebimdeki Giderler</h1>
+    <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
+      <option value="theme-default">🎨 Mavi (Varsayılan)</option>
+      <option value="theme-dark">🖤 Saf Koyu</option>
+      <option value="theme-light">☀️ Aydınlık</option>
+      <option value="theme-gray">🩶 Füme / Gri</option>
+    </select>
   </div>
 
-  <div class="total-card">
+  <div class="dashboard-grid">
+    <div class="dash-card">
+      <p>Aylık Gelir / Bütçe</p>
+      <input type="number" id="monthlyBudget" placeholder="0 ₺" onchange="updateBudget(this.value)">
+    </div>
+    <div class="dash-card">
+      <p>Cebime Kalan</p>
+      <h2 id="remainingBudget">0 ₺</h2>
+    </div>
+  </div>
+
+  <div class="dash-card" style="margin-bottom: 20px; width: 100%;">
     <p>Aylık Toplam Sabit Gider</p>
     <h2 id="totalAmountTL">0 ₺</h2>
-    <div class="total-breakdown" id="totalBreakdown"></div>
+    <div style="font-size: 11px; color: var(--subtext); margin-top: 4px;" id="totalBreakdown"></div>
   </div>
 
+  <!-- Kategori Dağılım Grafiği -->
+  <div class="chart-box" id="chartBox">
+    <h3>Kategori Dağılımı</h3>
+    <div id="chartContent"></div>
+  </div>
+
+  <!-- Yeni Gider Ekleme Formu -->
   <div class="form-group">
     <h3>Yeni Gider Ekle</h3>
     <input type="text" id="title" placeholder="Gider Adı (örn. Spotify, KYK, İnternet)">
@@ -124,21 +180,47 @@
     <button onclick="addExpense()">Gideri Listeye Ekle</button>
   </div>
 
-  <div class="list-header">
-    <div class="list-title">Kayıtlı Sabit Giderler</div>
-    <div style="font-size: 11px; color: var(--subtext);" id="itemCount">0 Kalem</div>
+  <!-- Arama ve Filtreleme -->
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="Giderlerde ara..." oninput="render()">
+    <select id="categoryFilter" onchange="render()">
+      <option value="ALL">Tüm Kategoriler</option>
+      <option value="🎵 Abonelik">🎵 Abonelikler</option>
+      <option value="🏠 Ev & Fatura">🏠 Ev & Fatura</option>
+      <option value="🎓 Eğitim & Borç">🎓 Eğitim & Borç</option>
+      <option value="🏍️ Araç & Bakım">🏍️ Araç & Bakım</option>
+      <option value="💳 Taksit & Diğer">💳 Taksit & Diğer</option>
+    </select>
   </div>
   
   <div id="expenseList"></div>
 
   <div class="backup-section">
-    <button class="backup-btn" onclick="exportData()">📥 Verileri Yedekle (İndir)</button>
+    <button class="backup-btn" onclick="exportData()">📥 Verileri Yedekle</button>
     <button class="backup-btn" onclick="document.getElementById('importFile').click()">📤 Yedeği Yükle</button>
     <input type="file" id="importFile" style="display:none" onchange="importData(event)">
   </div>
 
   <script>
     let expenses = JSON.parse(localStorage.getItem('expenses_v2')) || [];
+    let budget = localStorage.getItem('monthly_budget') || 0;
+    let activeTheme = localStorage.getItem('app_theme') || 'theme-default';
+
+    // Tema Ayarla
+    document.body.className = activeTheme;
+    document.getElementById('themeSelect').value = activeTheme;
+    document.getElementById('monthlyBudget').value = budget ? budget : '';
+
+    function changeTheme(themeName) {
+      document.body.className = themeName;
+      localStorage.setItem('app_theme', themeName);
+    }
+
+    function updateBudget(val) {
+      budget = Number(val);
+      localStorage.setItem('monthly_budget', budget);
+      render();
+    }
 
     function getDaysLeft(payDay) {
       const today = new Date().getDate();
@@ -154,10 +236,15 @@
       const list = document.getElementById('expenseList');
       const totalTL = document.getElementById('totalAmountTL');
       const totalBreakdown = document.getElementById('totalBreakdown');
-      const countEl = document.getElementById('itemCount');
+      const remainingEl = document.getElementById('remainingBudget');
+      const chartContent = document.getElementById('chartContent');
       
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      const filterCat = document.getElementById('categoryFilter').value;
+
       list.innerHTML = '';
       let totals = { '₺': 0, '$': 0, '€': 0 };
+      let categoryTotals = {};
 
       // Ödenmeyenler üste, ödenenler alta
       expenses.sort((a, b) => {
@@ -165,11 +252,24 @@
         return getDaysLeft(a.payDay) - getDaysLeft(b.payDay);
       });
 
-      expenses.forEach((item, index) => {
+      expenses.forEach((item) => {
         totals[item.currency] += Number(item.amount);
         
+        // Kategori bazlı toplam (Sadece TL için grafiğe ekleyelim)
+        if (item.currency === '₺') {
+          categoryTotals[item.category] = (categoryTotals[item.category] || 0) + Number(item.amount);
+        }
+      });
+
+      // Filtrelenmiş liste
+      expenses.forEach((item, index) => {
+        const matchesSearch = item.title.toLowerCase().includes(searchVal);
+        const matchesCat = filterCat === 'ALL' || item.category === filterCat;
+
+        if (!matchesSearch || !matchesCat) return;
+
         const daysLeft = getDaysLeft(item.payDay);
-        let statusClass = 'info';
+        let statusClass = '';
         let badge = `<span class="badge badge-info">${daysLeft} gün kaldı</span>`;
 
         if (item.paid) {
@@ -204,6 +304,7 @@
         `;
       });
 
+      // Toplam Hesaplama Göstergeleri
       totalTL.innerText = `${totals['₺'].toLocaleString('tr-TR')} ₺`;
       
       let subTotals = [];
@@ -211,7 +312,32 @@
       if (totals['€'] > 0) subTotals.push(`${totals['€']} €`);
       
       totalBreakdown.innerText = subTotals.length > 0 ? `+ Yabancı Para: ${subTotals.join(' | ')}` : '';
-      countEl.innerText = `${expenses.length} Kalem Gider`;
+
+      // Kalan Bütçe Hesaplama
+      const netRemaining = budget - totals['₺'];
+      remainingEl.innerText = `${netRemaining.toLocaleString('tr-TR')} ₺`;
+      remainingEl.style.color = netRemaining < 0 ? 'var(--danger)' : 'var(--accent)';
+
+      // Grafik Oluşturma
+      chartContent.innerHTML = '';
+      if (totals['₺'] > 0) {
+        for (let cat in categoryTotals) {
+          const percent = Math.round((categoryTotals[cat] / totals['₺']) * 100);
+          chartContent.innerHTML += `
+            <div class="bar-item">
+              <div class="bar-info">
+                <span>${cat}</span>
+                <span>${categoryTotals[cat]} ₺ (%${percent})</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: ${percent}%;"></div>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        chartContent.innerHTML = '<div style="font-size:12px; color:var(--subtext); text-align:center;">Henüz grafik için TL verisi yok.</div>';
+      }
 
       localStorage.setItem('expenses_v2', JSON.stringify(expenses));
     }
