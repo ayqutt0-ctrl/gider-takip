@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Cebimdeki Giderler</title>
+  <!-- Apple cihazlarda tam ekran uygulama gibi çalışması için -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; padding-top: 50px; min-height: 100vh; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .header h1 { font-size: 22px; font-weight: 700; color: var(--accent); }
+    
+    .total-card {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.4);
+    }
+    .total-card p { font-size: 14px; opacity: 0.9; }
+    .total-card h2 { font-size: 32px; font-weight: 800; margin-top: 4px; }
+
+    .form-group { background: var(--card); padding: 16px; border-radius: 16px; margin-bottom: 24px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px;
+      border: 1px solid #334155; background: #0f172a; color: white; font-size: 14px; outline: none;
+    }
+    .form-group button {
+      width: 100%; padding: 12px; border-radius: 10px; border: none;
+      background: var(--accent); color: #0f172a; font-weight: bold; font-size: 15px; cursor: pointer;
+    }
+
+    .list-title { font-size: 16px; margin-bottom: 12px; color: var(--subtext); }
+    .item {
+      background: var(--card); padding: 14px 16px; border-radius: 12px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .item-info h4 { font-size: 15px; font-weight: 600; }
+    .item-info p { font-size: 12px; color: var(--subtext); margin-top: 2px; }
+    .item-price { font-weight: 700; font-size: 15px; color: #38bdf8; }
+    .delete-btn { background: none; border: none; color: var(--danger); font-size: 18px; margin-left: 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Gider Takipçisi</h1>
+  </div>
+
+  <div class="total-card">
+    <p>Aylık Toplam Sabit Gider</p>
+    <h2 id="totalAmount">0 ₺</h2>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="title" placeholder="Abonelik / Gider Adı (örn. Spotify, KYK)">
+    <input type="number" id="amount" placeholder="Tutar (₺)">
+    <input type="number" id="payDay" placeholder="Ödeme Günü (Ayın 1 - 31'i arası)" min="1" max="31">
+    <button onclick="addExpense()">Gider Ekle</button>
+  </div>
+
+  <div class="list-title">Kayıtlı Sabit Giderler</div>
+  <div id="expenseList"></div>
+
+  <script>
+    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+    function render() {
+      const list = document.getElementById('expenseList');
+      const totalEl = document.getElementById('totalAmount');
+      list.innerHTML = '';
+      
+      let total = 0;
+      expenses.sort((a, b) => a.payDay - b.payDay);
+
+      expenses.forEach((item, index) => {
+        total += Number(item.amount);
+        list.innerHTML += `
+          <div class="item">
+            <div class="item-info">
+              <h4>${item.title}</h4>
+              <p>Her ayın ${item.payDay}. günü</p>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <span class="item-price">${item.amount} ₺</span>
+              <button class="delete-btn" onclick="deleteExpense(${index})">✕</button>
+            </div>
+          </div>
+        `;
+      });
+
+      totalEl.innerText = `${total.toLocaleString('tr-TR')} ₺`;
+      localStorage.setItem('expenses', JSON.stringify(expenses));
+    }
+
+    function addExpense() {
+      const title = document.getElementById('title').value;
+      const amount = document.getElementById('amount').value;
+      const payDay = document.getElementById('payDay').value;
+
+      if(!title || !amount || !payDay) return alert('Lütfen tüm alanları doldurun!');
+
+      expenses.push({ title, amount, payDay });
+      document.getElementById('title').value = '';
+      document.getElementById('amount').value = '';
+      document.getElementById('payDay').value = '';
+      
+      render();
+    }
+
+    function deleteExpense(index) {
+      expenses.splice(index, 1);
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
