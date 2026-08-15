@@ -30,7 +30,7 @@
       --warning: #f59e0b;
       --success: #10b981;
       --gold: #eab308;
-      --ai-glow: linear-gradient(135deg, #6366f1, #3b82f6, #06b6d4);
+      --ai-glow: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -82,7 +82,7 @@
       border: 1px solid var(--border); border-radius: 8px; padding: 8px; font-size: 16px; font-weight: bold; outline: none;
     }
 
-    /* İLERLEME ÇUBUĞU (BONUS) */
+    /* İLERLEME ÇUBUĞU */
     .progress-container { background: var(--input-bg); border-radius: 10px; height: 10px; width: 100%; overflow: hidden; border: 1px solid var(--border); margin-top: 8px; }
     .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
     .progress-text { font-size: 11px; color: var(--subtext); margin-top: 6px; text-align: right; font-weight: 600; }
@@ -113,9 +113,7 @@
     .item-sub { font-size: 11px; color: var(--subtext); margin-top: 3px; display: flex; gap: 8px; align-items: center; }
     
     /* ÖDEME ROZETİ */
-    .due-badge {
-      font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; display: inline-block;
-    }
+    .due-badge { font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; display: inline-block; }
     .due-badge.urgent { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
     .due-badge.normal { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
     .due-badge.passed { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
@@ -134,28 +132,23 @@
       content: ''; width: 5px; height: 5px; background: var(--danger); border-radius: 50%; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
     }
 
-    /* AKILLI ASİSTAN WIDGET */
+    /* YENİ / ŞIK ASİSTAN BUTONU (GÜNCELLENDİ) */
     .chat-toggle {
-      position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px;
+      position: fixed; bottom: 24px; right: 24px; width: 62px; height: 62px;
       border-radius: 50%; background: var(--ai-glow); color: #fff; display: flex;
-      align-items: center; justify-content: center; font-size: 24px; cursor: pointer;
-      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); z-index: 1000;
-      animation: float 3s ease-in-out infinite; transition: transform 0.2s;
+      align-items: center; justify-content: center; font-size: 26px; cursor: pointer;
+      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4); z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .chat-toggle:hover { transform: scale(1.08); }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
+    .chat-toggle:hover { transform: scale(1.1) rotate(5deg); }
 
     .chat-box {
-      position: fixed; bottom: 95px; right: 24px; width: 360px; height: 500px;
-      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
-      display: none; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 1000;
+      position: fixed; bottom: 98px; right: 24px; width: 360px; height: 520px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 22px;
+      display: none; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: 1000;
     }
     .chat-head {
-      background: var(--ai-glow); color: #fff; padding: 14px 18px;
+      background: var(--ai-glow); color: #fff; padding: 16px 18px;
       font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center;
     }
     
@@ -172,18 +165,18 @@
     .chat-msgs { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 12px; }
     .msg { padding: 10px 14px; border-radius: 12px; max-width: 88%; line-height: 1.4; word-break: break-word; position: relative; }
     .msg.bot { background: var(--input-bg); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
-    .msg.user { background: #6366f1; color: #fff; align-self: flex-end; font-weight: 600; }
+    .msg.user { background: #8b5cf6; color: #fff; align-self: flex-end; font-weight: 600; }
     
     /* SESLİ OKU BUTONU */
     .tts-btn {
       display: inline-flex; align-items: center; gap: 4px; font-size: 10px; margin-top: 6px;
-      color: var(--accent); cursor: pointer; background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border);
+      color: var(--accent); cursor: pointer; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);
     }
-    .tts-btn:hover { background: rgba(255,255,255,0.1); }
+    .tts-btn:hover { background: rgba(255,255,255,0.12); }
 
     .chat-input { display: flex; padding: 12px; background: var(--input-bg); border-top: 1px solid var(--border); gap: 8px; }
     .chat-input input { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
-    .chat-input button { padding: 10px 16px; border-radius: 10px; border: none; background: #6366f1; color: #fff; font-weight: bold; cursor: pointer; }
+    .chat-input button { padding: 10px 16px; border-radius: 10px; border: none; background: #8b5cf6; color: #fff; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body class="theme-default">
@@ -286,7 +279,7 @@
           <h3><i class="fa-solid fa-calculator"></i> Hızlı Döviz Çevirici</h3>
           <div class="form-group">
             <input type="number" id="convertTL" placeholder="TL Miktarı Girin..." oninput="convertCurrency()">
-            <div style="display:flex; justify-size:space-between; font-size:12px; background:var(--input-bg); padding:12px; border-radius:10px; border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; font-size:12px; background:var(--input-bg); padding:12px; border-radius:10px; border:1px solid var(--border);">
               <span>Tahmini Dolar: <strong id="resUSD" style="color:var(--accent);">$0.00</strong></span>
               <span style="margin-left:auto;">Tahmini Euro: <strong id="resEUR" style="color:var(--accent);">€0.00</strong></span>
             </div>
@@ -299,11 +292,14 @@
 
   </div>
 
-  <!-- AKILLI ASİSTAN WIDGET -->
-  <div class="chat-toggle" onclick="toggleChat()" title="Bütçe Takip Asistanı"><i class="fa-solid fa-robot"></i></div>
+  <!-- AKILLI ASİSTAN WIDGET (YENİLENMİŞ İKON) -->
+  <div class="chat-toggle" onclick="toggleChat()" title="Bütçe Takip Asistanı">
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
+  </div>
+  
   <div class="chat-box" id="chatBox">
     <div class="chat-head">
-      <span><i class="fa-solid fa-robot"></i> Bütçe Takip Asistanı</span>
+      <span><i class="fa-solid fa-wand-magic-sparkles"></i> Bütçe Takip Asistanı</span>
       <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
     </div>
     
@@ -313,11 +309,11 @@
 
     <div class="chat-msgs" id="chatMsgs">
       <div class="msg bot">
-        Merhaba! Ben Bütçe Takip Asistanı. Bütçeniz, döviz kurları, hesaplamalar veya tarih, coğrafya, hava durumu gibi genel konularda bana her şeyi sorabilirsiniz! ✨
+        Merhaba! Ben Bütçe Takip Asistanı. Bana bütçeniz haricinde tarih, coğrafya, genel kültür veya günlük merak ettiğiniz her şeyi özgürce sorabilirsiniz! 🚀
       </div>
     </div>
     <div class="chat-input">
-      <input type="text" id="chatInput" placeholder="Soru sor veya hesap yaptır..." onkeydown="if(event.key==='Enter') sendChat()">
+      <input type="text" id="chatInput" placeholder="İstediğin konuyu sor..." onkeydown="if(event.key==='Enter') sendChat()">
       <button onclick="sendChat()">Gönder</button>
     </div>
   </div>
@@ -344,7 +340,7 @@
       render();
     }
 
-    /* TİK SESİ EFEKTİ (Web Audio API) */
+    /* TİK SESİ EFEKTİ */
     function playTickSound() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -426,7 +422,6 @@
       link.click();
     }
 
-    /* KAÇ GÜN KALDI HESAPLAMA MANTIĞI */
     function getRemainingDaysText(payDay) {
       const today = new Date();
       const currentDay = today.getDate();
@@ -478,7 +473,6 @@
       remEl.innerText = `${Math.round(remaining).toLocaleString('tr-TR')} ₺`;
       remEl.style.color = remaining < 0 ? 'var(--danger)' : 'var(--accent)';
 
-      // İlerleme Çubuğu Güncelleme
       const percent = budget > 0 ? Math.min(100, Math.round((totalTL / budget) * 100)) : 0;
       document.getElementById('progressBar').style.width = `${percent}%`;
       document.getElementById('progressBar').style.background = percent > 90 ? 'var(--danger)' : 'var(--accent)';
@@ -530,7 +524,7 @@
       document.getElementById('resEUR').innerText = `€${(tl / liveRates.EUR).toFixed(2)}`;
     }
 
-    /* AKILLI ASİSTAN MANTIĞI & GENİŞ KAPSAMLI YANITLAR */
+    /* AKILLI ASİSTAN & DOĞAL SES SEÇİMİ (ROBOTİK OLMAYAN ERKEK / KADIN SESİ) */
     function toggleChat() {
       const box = document.getElementById('chatBox');
       box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
@@ -546,15 +540,37 @@
     function speakText(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        // Emoji ve özel simgeleri temizleyerek oku
+        
+        // Emoji ve simgeleri temizle
         const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
         const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'tr-TR';
-        utterance.rate = 1.0;
+        utterance.rate = 0.95; // Daha akıcı bir ritim için hafif düşürüldü
+        utterance.pitch = 0.95; // Robotik tiz sesleri engellemek için hafif kalınlaştırıldı
+
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Türkçe sesleri tara ve en doğal erkek / kadın sesini seç
+        let trVoices = voices.filter(v => v.lang.includes('tr') || v.lang.includes('TR'));
+        
+        // Kaliteli erkek sesleri önceliği (Tolga, Male, Google vb.)
+        let selectedVoice = trVoices.find(v => v.name.toLowerCase().includes('tolga') || v.name.toLowerCase().includes('male')) ||
+                            trVoices.find(v => v.name.toLowerCase().includes('google')) ||
+                            trVoices[0];
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+
         window.speechSynthesis.speak(utterance);
       } else {
         alert("Tarayıcınız sesli okuma özelliğini desteklemiyor.");
       }
+    }
+
+    // Ses motorunun yüklenmesini garanti et
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
     }
 
     function sendChat() {
@@ -584,48 +600,45 @@
              "2️⃣ Gider Ekle: Gider adı, tutarı ve ödeme gününü girip kaydet.\n" +
              "3️⃣ Takip Et: Ödemene kaç gün kaldığını liste rozetlerinden takip et.\n" +
              "4️⃣ Takvime Aktar: Takvim ikonuyla hatırları telefonuna indir.\n" +
-             "5️⃣ Genel Sorular: Bana bütçenin yanında tarih, coğrafya, hava durumu veya matematik soruları da sorabilirsin!";
+             "5️⃣ Sınırsız Soru: Bütçenin yanında tarih, coğrafya, genel kültür ve günlük konuları bana sorabilirsin!";
     }
 
     function processSmartReply(query, totalGiderTL) {
       let q = query.toLowerCase().trim();
       let rem = budget - totalGiderTL;
 
-      // 1. Teşekkürler / Selamlaşma
-      if (q.includes('teşekkür') || q.includes('tesekkur') || q.includes('sağol') || q.includes('sagol') || q.includes('eyvallah')) {
-        return "Rica ederim! Yardımcı olabildiysem ne mutlu bana. Başka bir sorun var mı?";
+      // 1. Selamlaşma / Hal Hatır
+      if (q.includes('teşekkür') || q.includes('tesekkur') || q.includes('sağol') || q.includes('eyvallah')) {
+        return "Rica ederim! Sana yardımcı olabildiysem ne mutlu bana. İstediğin zaman başka şey de sorabilirsin!";
       }
 
-      if (q.includes('merhaba') || q.includes('selam') || q.includes('naber') || q.includes('nasılsın') || q.includes('nasilsin')) {
-        return "Selamlar! Bütçenle ilgili bilgi almak, döviz öğrenmek veya genel kültür/tarih gibi konularda sohbet etmek için buradayım!";
+      if (q.includes('merhaba') || q.includes('selam') || q.includes('naber') || q.includes('nasılsın')) {
+        return "Harikayım, teşekkürler! Bütçen, döviz verilerin ya da merak ettiğin herhangi bir tarih/coğrafya/genel kültür konusu hakkında konuşmaya hazırım!";
       }
 
       // 2. Kullanım Rehberi
-      if (q.includes('nasıl kullanılır') || q.includes('nasil kullanilir') || q.includes('amaç') || q.includes('ne işe yarar')) {
+      if (q.includes('nasıl kullanılır') || q.includes('nasil kullanilir') || q.includes('rehber')) {
         return getUsageGuide();
       }
 
-      // 3. Tarih Soruları
-      if (q.includes('tarih') || q.includes('istanbul ne zaman fethetdildi') || q.includes('fetih') || q.includes('cumhuriyet')) {
-        if (q.includes('istanbul') || q.includes('fetih')) return "İstanbul, 29 Mayıs 1453 tarihinde Fatih Sultan Mehmet tarafından fethedilmiştir.";
-        if (q.includes('cumhuriyet')) return "Türkiye Cumhuriyeti, 29 Ekim 1923 tarihinde ilan edilmiştir.";
-        return "Tarih ile ilgili merak ettiğin spesifik bir olayı veya yılı sorabilirsin!";
+      // 3. Geniş Tarih Yanıtları
+      if (q.includes('tarih') || q.includes('fetih') || q.includes('cumhuriyet') || q.includes('savaş') || q.includes('osmanlı')) {
+        if (q.includes('istanbul') || q.includes('fetih')) return "İstanbul, 29 Mayıs 1453'te Fatih Sultan Mehmet tarafından fethedilerek çağ açıp çağ kapatmıştır.";
+        if (q.includes('cumhuriyet')) return "Türkiye Cumhuriyeti, 29 Ekim 1923'te Gazi Mustafa Kemal Atatürk ve silah arkadaşları tarafından ilan edilmiştir.";
+        if (q.includes('çanakkale')) return "Çanakkale Zaferi, 18 Mart 1915'te kahraman ordumuzun deniz zaferiyle tarihe kazınmıştır.";
+        return "Tarih sahnesi sayısız olayla dolu! Osmanlı, Selçuklu, Dünya Savaşları veya inkılaplar hakkında spesifik bir konu sorabilirsin.";
       }
 
-      // 4. Coğrafya Soruları
-      if (q.includes('coğrafya') || q.includes('başkent') || q.includes('dağ') || q.includes('nehir') || q.includes('en yüksek')) {
+      // 4. Geniş Coğrafya Yanıtları
+      if (q.includes('coğrafya') || q.includes('başkent') || q.includes('dağ') || q.includes('nehir') || q.includes('göl') || q.includes('deniz') || q.includes('nüfus')) {
         if (q.includes('türkiye') && q.includes('başkent')) return "Türkiye'nin başkenti Ankara'dır.";
-        if (q.includes('en yüksek')) return "Türkiye'nin en yüksek dağı 5.137 metre yüksekliğiyle Ağrı Dağı'dır.";
-        return "Coğrafya hakkında öğrenmek istediğin ülkeyi, şehri veya dağ/nehir bilgisini sorabilirsin!";
+        if (q.includes('en yüksek')) return "Türkiye'nin en yüksek noktası 5.137 metre ile Ağrı Dağı'dır. Dünyanınki ise 8.848 metre ile Everest Dağı'dır.";
+        if (q.includes('en uzun nehir')) return "Dünyanın en uzun nehri Nil Nehri, Türkiye'nin kendi sınırları içindeki en uzun nehri ise Kızılırmak'tır.";
+        return "Coğrafya derya deniz! Ülkeler, başkentler, dağlar, okyanuslar veya iklimler hakkında merak ettiğin her şeyi sorabilirsin.";
       }
 
-      // 5. Hava Durumu Tahminleri
-      if (q.includes('hava') || q.includes('yağmur') || q.includes('derece') || q.includes('hava durumu')) {
-        return "Anlık bölgesel hava durumu verileri için konumsal bilgiye ihtiyacım var ancak mevsim normallerine göre adımlarını atmayı ve tedbirli olmayı unutma! ☀️🌧️";
-      }
-
-      // 6. Matematiksel Hesaplama
-      if (/[\d\+\-\*\/\.]/.test(q) && (q.includes('+') || q.includes('-') || q.includes('*') || q.includes('/') || q.includes('topla'))) {
+      // 5. Matematik Hesaplama
+      if (/[\d\+\-\*\/\.]/.test(q) && (q.includes('+') || q.includes('-') || q.includes('*') || q.includes('/'))) {
         try {
           let mathExpr = q.replace(/[^0-9\+\-\*\/\.]/g, '');
           if (mathExpr) {
@@ -635,27 +648,25 @@
         } catch (e) {}
       }
 
-      // 7. Kalan / Bütçe Durumu
-      if (q.includes('kalan') || q.includes('bütçe') || q.includes('butce') || q.includes('cebimde') || q.includes('para var')) {
-        if (budget == 0) {
-          return "Henüz bir aylık gelir girmediniz. 'Aylık Gelir' kutusuna bütçenizi yazarsanız net kalan parayı hesaplayabilirim.";
-        }
-        return `Aylık gelirin ${budget} TL. Toplam harcaman ${Math.round(totalGiderTL)} TL. Cebine kalan net tutar: ${Math.round(rem)} TL.`;
+      // 6. Bütçe Bilgisi
+      if (q.includes('kalan') || q.includes('bütçe') || q.includes('butce') || q.includes('cebimde')) {
+        if (budget == 0) return "Henüz aylık gelir girmediniz. Yukarıdaki 'Aylık Gelir' alanına tutar yazarsanız cebinize kalanı anında hesaplarım.";
+        return `Aylık gelirin ${budget} TL, toplam harcaman ${Math.round(totalGiderTL)} TL. Cebine kalan net tutar: ${Math.round(rem)} TL.`;
       }
 
-      // 8. Gider Detayları
-      if (q.includes('gider') || q.includes('harcama') || q.includes('ne kadar harcadım')) {
-        if (expenses.length === 0) return "Şu an eklenmiş hiç gider kaydınız bulunmuyor.";
-        return `Şu ana kadar eklediğiniz ${expenses.length} adet giderin toplam tutarı: ${Math.round(totalGiderTL)} TL.`;
+      // 7. Gider Bilgisi
+      if (q.includes('gider') || q.includes('harcama')) {
+        if (expenses.length === 0) return "Sistemde henüz eklenmiş bir gider bulunmuyor.";
+        return `Toplam ${expenses.length} kayıtlı giderin var. Bunların toplam maliyeti: ${Math.round(totalGiderTL)} TL.`;
       }
 
-      // 9. Döviz ve Altın Kurları
-      if (q.includes('döviz') || q.includes('dolar') || q.includes('euro') || q.includes('kur') || q.includes('altın')) {
-        return `Güncel Anlık Kurlar:\n• USD: ${liveRates.USD.toFixed(2)} TL\n• EUR: ${liveRates.EUR.toFixed(2)} TL\n• Gram Altın: ${liveRates.GOLD.toFixed(2)} TL`;
+      // 8. Anlık Piyasa
+      if (q.includes('döviz') || q.includes('dolar') || q.includes('euro') || q.includes('altın') || q.includes('kur')) {
+        return `Güncel Kurlar:\n• Dolar: ${liveRates.USD.toFixed(2)} TL\n• Euro: ${liveRates.EUR.toFixed(2)} TL\n• Gram Altın: ${liveRates.GOLD.toFixed(2)} TL`;
       }
 
-      // 10. Genel Cevap Mekanizması
-      return `"${query}" hakkında ne öğrenmek istediğini tam anlayamadım. Bütçeni sorabilir, "250 + 400" gibi hesap yaptırabilir ya da tarih/coğrafya soruları sorabilirsin!`;
+      // 9. Esnek / Genel Cevap
+      return `"${query}" sorunu aldım! Bana bütçen, harcamaların, döviz kurları, tarih, coğrafya, matematik veya aklına gelen herhangi bir konuda soru sorabilirsin.`;
     }
 
     function addMsg(text, sender) {
@@ -665,7 +676,6 @@
       
       let htmlContent = text.replace(/\n/g, '<br>');
       
-      // Bot cevaplarına sesli oku butonu ekle
       if (sender === 'bot') {
         div.innerHTML = `${htmlContent}<br><button class="tts-btn" onclick="speakText('${text.replace(/'/g, "\\'")}')"><i class="fa-solid fa-volume-high"></i> Sesli Oku</button>`;
       } else {
