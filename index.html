@@ -1,656 +1,498 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gider ve Bütçe Takip Paneli</title>
-    <!-- FontAwesome & Chart.js -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #38bdf8;
-            --accent-hover: #0284c7;
-            --text-color: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Gider Takip</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* TEMALAR */
+    body.theme-default {
+      --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc;
+      --subtext: #94a3b8; --input-bg: #0f172a; --border: #334155;
+    }
+    body.theme-dark {
+      --bg: #000000; --card: #121212; --accent: #00adb5; --text: #eeeeee;
+      --subtext: #888888; --input-bg: #1e1e1e; --border: #2a2a2a;
+    }
+    body.theme-light {
+      --bg: #f1f5f9; --card: #ffffff; --accent: #0284c7; --text: #0f172a;
+      --subtext: #64748b; --input-bg: #f8fafc; --border: #cbd5e1;
+    }
+    body.theme-gray {
+      --bg: #222831; --card: #393e46; --accent: #00adb5; --text: #eeeeee;
+      --subtext: #929aab; --input-bg: #222831; --border: #4b525d;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    :root {
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --gold: #eab308;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 20px;
-            min-height: 100vh;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+    
+    .container { max-width: 1200px; margin: 0 auto; }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    /* ÜST BAŞLIK & TEMA */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+    .header h1 { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
 
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
+    .theme-select {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer;
+    }
 
-        header h1 {
-            font-size: 1.8rem;
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+    /* CANLI DÖVİZ BANDI */
+    .rates-ticker {
+      background: var(--card); border: 1px solid var(--border); padding: 10px 16px;
+      border-radius: 12px; display: flex; justify-content: space-around; align-items: center;
+      font-size: 13px; margin-bottom: 20px; font-weight: 600; flex-wrap: wrap; gap: 10px;
+    }
+    .rate-item { display: flex; align-items: center; gap: 6px; }
+    .rate-label { color: var(--subtext); font-size: 12px; }
+    .rate-val { color: var(--text); font-family: monospace; font-size: 14px; font-weight: bold; }
 
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+    /* MASAÜSTÜ İKİLİ DÜZEN (LAYOUT) */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
 
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-        }
+    @media (min-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+    }
 
-        .card h2 {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .column { display: flex; flex-direction: column; gap: 20px; }
 
-        /* Form Elemanları */
-        .form-group {
-            margin-bottom: 12px;
-        }
+    /* KART TASARIMLARI */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px; transition: all 0.2s ease;
+    }
+    .card h3 { font-size: 15px; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
+    /* DASHBOARD BÜTÇE KARTLARI */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .dash-card {
+      background: var(--input-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border); text-align: center;
+    }
+    .dash-card p { font-size: 11px; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; }
+    .dash-card h2 { font-size: 18px; font-weight: 800; color: var(--accent); }
+    .dash-card input {
+      width: 100%; text-align: center; background: var(--card); color: var(--text);
+      border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 15px; font-weight: bold;
+    }
 
-        input, select, button {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: #0f172a;
-            color: var(--text-color);
-            outline: none;
-            font-size: 0.9rem;
-        }
+    /* FORM */
+    .form-group { display: flex; flex-direction: column; gap: 10px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 10px 12px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 13px; outline: none;
+    }
+    .form-row { display: flex; gap: 8px; }
+    .form-row select { flex: 1; }
+    .form-row input { flex: 2; }
+    .btn-primary {
+      width: 100%; padding: 11px; border-radius: 8px; border: none;
+      background: var(--accent); color: #000; font-weight: bold; font-size: 14px; cursor: pointer;
+    }
 
-        button {
-            background-color: var(--accent-color);
-            color: #0f172a;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            margin-top: 5px;
-        }
+    /* GİDER LİSTESİ */
+    .expense-list { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; }
+    .item {
+      background: var(--input-bg); padding: 12px; border-radius: 10px;
+      display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);
+    }
+    .item-title { font-size: 13px; font-weight: 600; }
+    .item-sub { font-size: 11px; color: var(--subtext); margin-top: 2px; }
+    .item-right { text-align: right; display: flex; align-items: center; gap: 6px; }
+    .item-price { font-weight: 700; font-size: 13px; color: var(--accent); }
+    
+    .action-btn { background: none; border: none; font-size: 14px; cursor: pointer; padding: 4px; color: var(--subtext); }
+    .action-btn:hover { color: var(--text); }
 
-        button:hover {
-            background-color: var(--accent-hover);
-            color: #fff;
-        }
+    /* TAKVİM GRID */
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px; }
+    .cal-head { font-weight: bold; color: var(--subtext); padding: 4px 0; }
+    .cal-day { background: var(--input-bg); padding: 8px 0; border-radius: 6px; border: 1px solid var(--border); position: relative; }
+    .cal-day.has-event::after {
+      content: ''; width: 4px; height: 4px; background: var(--danger); border-radius: 50%; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+    }
 
-        /* Liste Stilleri */
-        .expense-list {
-            list-style: none;
-            max-height: 280px;
-            overflow-y: auto;
-        }
-
-        .expense-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #0f172a;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .expense-info h4 {
-            font-size: 0.9rem;
-        }
-
-        .expense-info span {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .expense-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .btn-sm {
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            width: auto;
-        }
-
-        .btn-ics { background-color: #3b82f6; color: white; }
-        .btn-del { background-color: var(--danger); color: white; }
-
-        /* Takvim */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-
-        .cal-day-head { font-weight: bold; color: var(--text-secondary); padding: 4px; }
-        .cal-day {
-            padding: 8px 2px;
-            background: #0f172a;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            position: relative;
-        }
-
-        .cal-day.has-expense::after {
-            content: '';
-            width: 5px;
-            height: 5px;
-            background-color: var(--danger);
-            border-radius: 50%;
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* İlerleme Çubuğu */
-        .progress-bar-bg {
-            background-color: #0f172a;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background-color: var(--success);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        /* Canlı Asistan (Chatbot) */
-        .chat-widget-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            z-index: 999;
-        }
-
-        .chat-box {
-            position: fixed;
-            bottom: 85px;
-            right: 20px;
-            width: 320px;
-            height: 420px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            display: none;
-            flex-direction: column;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            overflow: hidden;
-        }
-
-        .chat-header {
-            background-color: var(--accent-color);
-            color: #0f172a;
-            padding: 12px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 12px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 0.85rem;
-        }
-
-        .msg {
-            padding: 8px 12px;
-            border-radius: 8px;
-            max-width: 85%;
-            line-height: 1.3;
-        }
-
-        .msg.bot {
-            background-color: #0f172a;
-            color: var(--text-color);
-            align-self: flex-start;
-            border: 1px solid var(--border-color);
-        }
-
-        .msg.user {
-            background-color: var(--accent-color);
-            color: #0f172a;
-            align-self: flex-end;
-            font-weight: 500;
-        }
-
-        .chat-input {
-            display: flex;
-            padding: 8px;
-            background-color: #0f172a;
-            border-top: 1px solid var(--border-color);
-            gap: 6px;
-        }
-
-        .chat-input input {
-            flex: 1;
-        }
-
-        .chat-input button {
-            width: auto;
-            margin-top: 0;
-            padding: 8px 12px;
-        }
-    </style>
+    /* ASİSTAN CHATBOT */
+    .chat-toggle {
+      position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
+      border-radius: 50%; background: var(--accent); color: #000; display: flex;
+      align-items: center; justify-content: center; font-size: 20px; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;
+    }
+    .chat-box {
+      position: fixed; bottom: 80px; right: 20px; width: 320px; height: 400px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      display: none; flex-direction: column; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 1000;
+    }
+    .chat-head { background: var(--accent); color: #000; padding: 10px 14px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+    .chat-msgs { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+    .msg { padding: 8px 12px; border-radius: 8px; max-width: 85%; line-height: 1.4; }
+    .msg.bot { background: var(--input-bg); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
+    .msg.user { background: var(--accent); color: #000; align-self: flex-end; font-weight: 600; }
+    .chat-input { display: flex; padding: 8px; background: var(--input-bg); border-top: 1px solid var(--border); gap: 6px; }
+    .chat-input input { flex: 1; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12px; outline: none; }
+    .chat-input button { width: auto; padding: 6px 12px; border-radius: 6px; border: none; background: var(--accent); color: #000; font-weight: bold; cursor: pointer; }
+  </style>
 </head>
-<body>
+<body class="theme-default">
 
-    <div class="container">
-        <header>
-            <h1><i class="fa-solid fa-wallet"></i> Bütçe & Gider Takip Paneli</h1>
-        </header>
-
-        <div class="grid-layout">
-            <!-- 1. Gider Ekleme Formu -->
-            <div class="card">
-                <h2><i class="fa-solid fa-plus-circle"></i> Yeni Gider Ekle</h2>
-                <form id="expense-form">
-                    <div class="form-group">
-                        <label>Gider Başlığı</label>
-                        <input type="text" id="title" placeholder="Örn: Market Harcaması" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Tutar (TL)</label>
-                        <input type="number" id="amount" placeholder="0.00" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Kategori</label>
-                        <select id="category">
-                            <option value="Mutfak">Mutfak & Market</option>
-                            <option value="Fatura">Fatura & Aidat</option>
-                            <option value="Ulaşım">Ulaşım & Yakıt</option>
-                            <option value="Eğlence">Eğlence & Hobi</option>
-                            <option value="Diğer">Diğer</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Tarih</label>
-                        <input type="date" id="date" required>
-                    </div>
-                    <button type="submit"><i class="fa-solid fa-check"></i> Kaydet</button>
-                </form>
-            </div>
-
-            <!-- 2. Pasta Grafiği -->
-            <div class="card">
-                <h2><i class="fa-solid fa-chart-pie"></i> Kategoriye Göre Dağılım</h2>
-                <div style="position: relative; height: 220px;">
-                    <canvas id="expenseChart"></canvas>
-                </div>
-            </div>
-
-            <!-- 3. Mini Takvim Görünümü -->
-            <div class="card">
-                <h2><i class="fa-solid fa-calendar-days"></i> Ödeme Takvimi</h2>
-                <div class="calendar-grid" id="calendar">
-                    <!-- Takvim JS ile dolacak -->
-                </div>
-            </div>
-        </div>
-
-        <div class="grid-layout">
-            <!-- 4. Gider Listesi ve Takvime Ekleme -->
-            <div class="card">
-                <h2><i class="fa-solid fa-list-check"></i> Gider Kayıtları</h2>
-                <ul class="expense-list" id="expense-list">
-                    <!-- Kayıtlar buraya gelecek -->
-                </ul>
-            </div>
-
-            <!-- 5. Birikim Hedefleri -->
-            <div class="card">
-                <h2><i class="fa-solid fa-bullseye"></i> Birikim Hedefi</h2>
-                <div class="form-group">
-                    <label>Hedef Adı</label>
-                    <input type="text" id="goal-title" value="Acil Durum Fonu">
-                </div>
-                <div class="form-group">
-                    <label>Hedef Tutar / Mevcut Birikim (TL)</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="number" id="goal-target" placeholder="Hedef" value="10000">
-                        <input type="number" id="goal-current" placeholder="Mevcut" value="2500">
-                    </div>
-                </div>
-                <button onclick="updateGoal()"><i class="fa-solid fa-arrows-rotate"></i> İlerlemeyi Güncelle</button>
-                <div style="margin-top: 15px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-                        <span id="goal-percent-text">%25 Tamamlandı</span>
-                        <span id="goal-amount-text">2,500 / 10,000 TL</span>
-                    </div>
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill" id="goal-bar" style="width: 25%;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 6. Hızlı Döviz/Altın Çevirici -->
-            <div class="card">
-                <h2><i class="fa-solid fa-calculator"></i> Hızlı Döviz Çevirici</h2>
-                <div class="form-group">
-                    <label>TL Tutar</label>
-                    <input type="number" id="convert-tl" placeholder="TL Miktarı Girin" oninput="convertCurrency()">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; margin-top: 10px;">
-                    <div style="display: flex; justify-content: space-between; background: #0f172a; padding: 8px; border-radius: 6px;">
-                        <span>USD Tahmini:</span>
-                        <strong id="res-usd">$0.00</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; background: #0f172a; padding: 8px; border-radius: 6px;">
-                        <span>EUR Tahmini:</span>
-                        <strong id="res-eur">€0.00</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    
+    <!-- ÜST BAR -->
+    <div class="header">
+      <h1><i class="fa-solid fa-wallet"></i> Gider Takip</h1>
+      <div class="header-actions">
+        <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
+          <option value="theme-default">🎨 Mavi</option>
+          <option value="theme-dark">🖤 Koyu</option>
+          <option value="theme-light">☀️ Açık</option>
+          <option value="theme-gray">🩶 Gri</option>
+        </select>
+      </div>
     </div>
 
-    <!-- 7. Akıllı Asistan (A.I.A) Widget -->
-    <div class="chat-widget-btn" onclick="toggleChat()">
-        <i class="fa-solid fa-robot"></i>
+    <!-- CANLI DÖVİZ BANDI -->
+    <div class="rates-ticker">
+      <div class="rate-item"><span class="rate-label">USD:</span> <span class="rate-val" id="usdRate">Yükleniyor...</span></div>
+      <div class="rate-item"><span class="rate-label">EUR:</span> <span class="rate-val" id="eurRate">Yükleniyor...</span></div>
+      <div class="rate-item"><span class="rate-label">Gr. Altın:</span> <span class="rate-val" id="goldRate" style="color:var(--gold);">Yükleniyor...</span></div>
     </div>
 
-    <div class="chat-box" id="chat-box">
-        <div class="chat-header">
-            <span><i class="fa-solid fa-headset"></i> A.I.A - Akıllı Asistan</span>
-            <span style="cursor: pointer;" onclick="toggleChat()">✕</span>
+    <!-- ANA DÜZEN (SÜTUNLAR) -->
+    <div class="main-grid">
+      
+      <!-- SOL SÜTUN (Bütçe, Form, Liste) -->
+      <div class="column">
+        
+        <!-- BÜTÇE PANORAMA -->
+        <div class="card">
+          <h3><i class="fa-solid fa-chart-line"></i> Bütçe Özeti</h3>
+          <div class="dashboard-grid">
+            <div class="dash-card">
+              <p>Aylık Gelir</p>
+              <input type="number" id="monthlyBudget" placeholder="0 ₺" onchange="updateBudget(this.value)">
+            </div>
+            <div class="dash-card">
+              <p>Cebime Kalan</p>
+              <h2 id="remainingBudget">0 ₺</h2>
+            </div>
+          </div>
         </div>
-        <div class="chat-messages" id="chat-messages">
-            <div class="msg bot">Merhaba! Ben bütçe asistanınız A.I.A. Uygulama ile ilgili aklınıza takılan her şeyi sorabilirsiniz! 😊</div>
+
+        <!-- FORM -->
+        <div class="card">
+          <h3><i class="fa-solid fa-plus-circle"></i> Yeni Gider Ekle</h3>
+          <div class="form-group">
+            <input type="text" id="title" placeholder="Gider Adı (örn. KYK, İnternet, Market)">
+            <div class="form-row">
+              <select id="currency">
+                <option value="₺">₺ (TL)</option>
+                <option value="$">$ (USD)</option>
+                <option value="€">€ (EUR)</option>
+              </select>
+              <input type="number" id="amount" placeholder="Tutar">
+            </div>
+            <div class="form-row">
+              <select id="category">
+                <option value="Abonelik">🎵 Abonelikler</option>
+                <option value="Fatura">🏠 Ev & Fatura</option>
+                <option value="Eğitim">🎓 Eğitim & Borç</option>
+                <option value="Araç">🏍️ Araç & Bakım</option>
+                <option value="Diğer">💳 Diğer</option>
+              </select>
+              <input type="number" id="payDay" placeholder="Ödeme Günü (1-31)" min="1" max="31">
+            </div>
+            <button class="btn-primary" onclick="addExpense()">Ekle</button>
+          </div>
         </div>
-        <div class="chat-input">
-            <input type="text" id="chat-in" placeholder="Bir şey sorun..." onkeydown="if(event.key==='Enter') sendChat()">
-            <button onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
+
+        <!-- GİDER LİSTESİ -->
+        <div class="card">
+          <h3><i class="fa-solid fa-list-check"></i> Gider Kayıtları</h3>
+          <div class="expense-list" id="expenseList"></div>
         </div>
+
+      </div>
+
+      <!-- SAĞ SÜTUN (Grafik, Takvim, Çevirici) -->
+      <div class="column">
+
+        <!-- PASTA GRAFİĞİ -->
+        <div class="card">
+          <h3><i class="fa-solid fa-chart-pie"></i> Kategori Dağılımı</h3>
+          <div style="position: relative; height: 200px;">
+            <canvas id="expenseChart"></canvas>
+          </div>
+        </div>
+
+        <!-- MİNİ TAKVİM -->
+        <div class="card">
+          <h3><i class="fa-solid fa-calendar-days"></i> Bu Ayın Ödemeleri</h3>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <!-- DÖVİZ ÇEVİRİCİ -->
+        <div class="card">
+          <h3><i class="fa-solid fa-calculator"></i> Hızlı Döviz Çevirici</h3>
+          <div class="form-group">
+            <input type="number" id="convertTL" placeholder="TL Miktarı Girin..." oninput="convertCurrency()">
+            <div style="display:flex; justify-size:space-between; font-size:12px; background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+              <span>Tahmini Dolar: <strong id="resUSD" style="color:var(--accent);">$0.00</strong></span>
+              <span style="margin-left:auto;">Tahmini Euro: <strong id="resEUR" style="color:var(--accent);">€0.00</strong></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
-    <script>
-        // Veri Yapısı
-        let expenses = JSON.parse(localStorage.getItem('my_expenses')) || [];
-        let chartInstance = null;
+  </div>
 
-        // Sayfa Yüklenme
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('date').valueAsDate = new Date();
-            renderExpenses();
-            renderCalendar();
-            initChart();
-            updateGoal();
-        });
+  <!-- AKILLI ASİSTAN (A.I.A) WIDGET -->
+  <div class="chat-toggle" onclick="toggleChat()"><i class="fa-solid fa-robot"></i></div>
+  <div class="chat-box" id="chatBox">
+    <div class="chat-head">
+      <span><i class="fa-solid fa-headset"></i> A.I.A Akıllı Asistan</span>
+      <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
+    </div>
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="msg bot">Merhaba! Ben Bütçe Asistanın A.I.A. Harcamaların, bakiyen veya kurlar hakkında bana soru sorabilirsin! 😊</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Soru sor..." onkeydown="if(event.key==='Enter') sendChat()">
+      <button onclick="sendChat()">Gönder</button>
+    </div>
+  </div>
 
-        // Form Gönderim
-        document.getElementById('expense-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('title').value;
-            const amount = parseFloat(document.getElementById('amount').value);
-            const category = document.getElementById('category').value;
-            const date = document.getElementById('date').value;
+  <script>
+    let expenses = JSON.parse(localStorage.getItem('expenses_v4')) || [];
+    let budget = localStorage.getItem('budget_v4') || 0;
+    let activeTheme = localStorage.getItem('theme_v4') || 'theme-default';
+    let liveRates = { USD: 34.50, EUR: 37.20, GOLD: 3025.00 };
+    let chartInstance = null;
 
-            expenses.push({ id: Date.now(), title, amount, category, date });
-            saveAndRefresh();
-            document.getElementById('title').value = '';
-            document.getElementById('amount').value = '';
-        });
+    document.body.className = activeTheme;
+    document.getElementById('themeSelect').value = activeTheme;
+    document.getElementById('monthlyBudget').value = budget ? budget : '';
 
-        function saveAndRefresh() {
-            localStorage.setItem('my_expenses', JSON.stringify(expenses));
-            renderExpenses();
-            renderCalendar();
-            updateChart();
+    function changeTheme(theme) {
+      document.body.className = theme;
+      localStorage.setItem('theme_v4', theme);
+    }
+
+    function updateBudget(val) {
+      budget = Number(val);
+      localStorage.setItem('budget_v4', budget);
+      render();
+    }
+
+    async function fetchLiveRates() {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        if (res.ok) {
+          const data = await res.json();
+          liveRates.USD = data.rates.TRY;
+          liveRates.EUR = data.rates.TRY / data.rates.EUR;
+          liveRates.GOLD = (2650 / 31.1035) * liveRates.USD;
+
+          document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(4)} ₺`;
+          document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(4)} ₺`;
+          document.getElementById('goldRate').innerText = `${liveRates.GOLD.toFixed(2)} ₺`;
+        }
+      } catch (e) {}
+      render();
+    }
+
+    function addExpense() {
+      const title = document.getElementById('title').value;
+      const amount = document.getElementById('amount').value;
+      const currency = document.getElementById('currency').value;
+      const category = document.getElementById('category').value;
+      const payDay = document.getElementById('payDay').value;
+
+      if (!title || !amount || !payDay) return alert('Lütfen bilgileri eksiksiz girin!');
+
+      expenses.push({ id: Date.now(), title, amount, currency, category, payDay });
+      
+      document.getElementById('title').value = '';
+      document.getElementById('amount').value = '';
+      document.getElementById('payDay').value = '';
+
+      saveAndRender();
+    }
+
+    function deleteExpense(id) {
+      expenses = expenses.filter(x => x.id !== id);
+      saveAndRender();
+    }
+
+    function saveAndRender() {
+      localStorage.setItem('expenses_v4', JSON.stringify(expenses));
+      render();
+    }
+
+    function downloadICS(title, amount, payDay) {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(payDay).padStart(2, '0');
+      
+      const icsData = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:Ödeme: ${title} (${amount})\nDTSTART;VALUE=DATE:${year}${month}${day}\nEND:VEVENT\nEND:VCALENDAR`;
+      const blob = new Blob([icsData], { type: 'text/calendar' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${title}.ics`;
+      link.click();
+    }
+
+    function render() {
+      const list = document.getElementById('expenseList');
+      list.innerHTML = '';
+      let totalTL = 0;
+
+      expenses.forEach(item => {
+        let itemTL = Number(item.amount);
+        if (item.currency === '$') itemTL *= liveRates.USD;
+        if (item.currency === '€') itemTL *= liveRates.EUR;
+        totalTL += itemTL;
+
+        list.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-title">${item.title}</div>
+              <div class="item-sub">Her ayın ${item.payDay}. günü • ${item.category}</div>
+            </div>
+            <div class="item-right">
+              <span class="item-price">${item.amount} ${item.currency}</span>
+              <button class="action-btn" title="Takvime Ekle" onclick="downloadICS('${item.title}', '${item.amount} ${item.currency}', ${item.payDay})"><i class="fa-regular fa-calendar-plus"></i></button>
+              <button class="action-btn" style="color:var(--danger)" onclick="deleteExpense(${item.id})"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+
+      const remaining = budget - totalTL;
+      const remEl = document.getElementById('remainingBudget');
+      remEl.innerText = `${Math.round(remaining).toLocaleString('tr-TR')} ₺`;
+      remEl.style.color = remaining < 0 ? 'var(--danger)' : 'var(--accent)';
+
+      renderChart();
+      renderCalendar();
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById('expenseChart').getContext('2d');
+      const categories = ['Abonelik', 'Fatura', 'Eğitim', 'Araç', 'Diğer'];
+      const totals = categories.map(cat => {
+        return expenses.filter(e => e.category === cat).reduce((acc, curr) => {
+          let val = Number(curr.amount);
+          if (curr.currency === '$') val *= liveRates.USD;
+          if (curr.currency === '€') val *= liveRates.EUR;
+          return acc + val;
+        }, 0);
+      });
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: categories,
+          datasets: [{ data: totals, backgroundColor: ['#ef4444', '#38bdf8', '#f59e0b', '#10b981', '#8b5cf6'], borderWidth: 1 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10 } } } } }
+      });
+    }
+
+    function renderCalendar() {
+      const cal = document.getElementById('calendarGrid');
+      cal.innerHTML = '';
+      const days = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'];
+      days.forEach(d => cal.innerHTML += `<div class="cal-head">${d}</div>`);
+
+      for (let i = 1; i <= 31; i++) {
+        const hasEv = expenses.some(e => Number(e.payDay) === i);
+        cal.innerHTML += `<div class="cal-day ${hasEv ? 'has-event' : ''}">${i}</div>`;
+      }
+    }
+
+    function convertCurrency() {
+      const tl = parseFloat(document.getElementById('convertTL').value) || 0;
+      document.getElementById('resUSD').innerText = `$${(tl / liveRates.USD).toFixed(2)}`;
+      document.getElementById('resEUR').innerText = `€${(tl / liveRates.EUR).toFixed(2)}`;
+    }
+
+    /* AKILLI ASİSTAN (A.I.A) */
+    function toggleChat() {
+      const box = document.getElementById('chatBox');
+      box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function sendChat() {
+      const input = document.getElementById('chatInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      addMsg(val, 'user');
+      input.value = '';
+
+      setTimeout(() => {
+        let q = val.toLowerCase();
+        let reply = "Tam anlayamadım. Bütçeniz, döviz kurları, gider ekleme veya tema değiştirme hakkında sorular sorabilirsiniz!";
+
+        let totalGiderTL = expenses.reduce((acc, curr) => {
+          let v = Number(curr.amount);
+          if (curr.currency === '$') v *= liveRates.USD;
+          if (curr.currency === '€') v *= liveRates.EUR;
+          return acc + v;
+        }, 0);
+
+        if (q.includes('kalan') || q.includes('bütçe') || q.includes('cebimde')) {
+          let rem = budget - totalGiderTL;
+          reply = `Aylık bütçeniz ${budget} ₺. Toplam gideriniz çıktıktan sonra cebinize kalan net tutar: ${Math.round(rem)} ₺.`;
+        } else if (q.includes('gider') || q.includes('toplam') || q.includes('harcama')) {
+          reply = `Şu ana kadar eklediğiniz ${expenses.length} adet giderin toplam Türk Lirası karşılığı: ${Math.round(totalGiderTL)} ₺.`;
+        } else if (q.includes('döviz') || q.includes('dolar') || q.includes('euro') || q.includes('kur')) {
+          reply = `Anlık Güncel Kurlar:\nUSD: ${liveRates.USD.toFixed(2)} ₺\nEUR: ${liveRates.EUR.toFixed(2)} ₺\nGram Altın: ${liveRates.GOLD.toFixed(2)} ₺`;
+        } else if (q.includes('tema') || q.includes('renk')) {
+          reply = "Sağ üst köşedeki tema seçim kutusundan (Mavi, Koyu, Açık, Gri) istediğiniz görünümü seçebilirsiniz.";
+        } else if (q.includes('sil') || q.includes('nasıl')) {
+          reply = "Gider Kayıtları listesindeki kırmızı çöp kutusu ikonuna basarak giderlerinizi silebilirsiniz.";
+        } else if (q.includes('selam') || q.includes('merhaba')) {
+          reply = "Selam! Ben A.I.A. Bütçeniz veya harcamalarınızla ilgili ne öğrenmek istersiniz?";
         }
 
-        // Listeyi Çizme
-        function renderExpenses() {
-            const list = document.getElementById('expense-list');
-            list.innerHTML = '';
+        addMsg(reply, 'bot');
+      }, 400);
+    }
 
-            expenses.slice().reverse().forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'expense-item';
-                li.innerHTML = `
-                    <div class="expense-info">
-                        <h4>${item.title}</h4>
-                        <span>${item.category} • ${item.date}</span>
-                    </div>
-                    <div class="expense-actions">
-                        <strong style="color: var(--danger); font-size: 0.9rem;">-${item.amount} TL</strong>
-                        <button class="btn-sm btn-ics" title="Takvime Ekle" onclick="downloadICS('${item.title}', ${item.amount}, '${item.date}')"><i class="fa-regular fa-calendar-plus"></i></button>
-                        <button class="btn-sm btn-del" onclick="deleteExpense(${item.id})"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-                list.appendChild(li);
-            });
-        }
+    function addMsg(text, sender) {
+      const msgs = document.getElementById('chatMsgs');
+      const div = document.createElement('div');
+      div.className = `msg ${sender}`;
+      div.innerText = text;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
 
-        function deleteExpense(id) {
-            expenses = expenses.filter(i => i.id !== id);
-            saveAndRefresh();
-        }
-
-        // .ics Dosyası Oluşturma (Takvim)
-        function downloadICS(title, amount, dateStr) {
-            const dateObj = new Date(dateStr);
-            const formattedDate = dateObj.toISOString().replace(/-|:|\.\d+/g, "").slice(0, 8);
-            
-            const icsData = 
-`BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Gider Takip App//TR
-BEGIN:VEVENT
-SUMMARY:Ödeme: ${title} (${amount} TL)
-DESCRIPTION:${title} harcamasının ödemesi.
-DTSTART;VALUE=DATE:${formattedDate}
-END:VEVENT
-END:VCALENDAR`;
-
-            const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `${title}-odeme.ics`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Chart.js Pasta Grafiği
-        function initChart() {
-            const ctx = document.getElementById('expenseChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: getChartData(),
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: '#f8fafc', font: { size: 10 } } }
-                    }
-                }
-            });
-        }
-
-        function updateChart() {
-            if (chartInstance) {
-                chartInstance.data = getChartData();
-                chartInstance.update();
-            }
-        }
-
-        function getChartData() {
-            const categories = ['Mutfak', 'Fatura', 'Ulaşım', 'Eğlence', 'Diğer'];
-            const totals = categories.map(cat => {
-                return expenses.filter(e => e.category === cat).reduce((acc, curr) => acc + curr.amount, 0);
-            });
-
-            return {
-                labels: categories,
-                datasets: [{
-                    data: totals,
-                    backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b', '#10b981', '#8b5cf6'],
-                    borderWidth: 1
-                }]
-            };
-        }
-
-        // Mini Takvim
-        function renderCalendar() {
-            const cal = document.getElementById('calendar');
-            cal.innerHTML = '';
-            
-            const days = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'];
-            days.forEach(d => {
-                cal.innerHTML += `<div class="cal-day-head">${d}</div>`;
-            });
-
-            const today = new Date();
-            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                const hasExpense = expenses.some(e => e.date === dateStr);
-
-                cal.innerHTML += `
-                    <div class="cal-day ${hasExpense ? 'has-expense' : ''}">
-                        ${i}
-                    </div>
-                `;
-            }
-        }
-
-        // Birikim Hedefi
-        function updateGoal() {
-            const target = parseFloat(document.getElementById('goal-target').value) || 1;
-            const current = parseFloat(document.getElementById('goal-current').value) || 0;
-            const percent = Math.min(Math.round((current / target) * 100), 100);
-
-            document.getElementById('goal-bar').style.width = percent + '%';
-            document.getElementById('goal-percent-text').innerText = `%${percent} Tamamlandı`;
-            document.getElementById('goal-amount-text').innerText = `${current.toLocaleString()} / ${target.toLocaleString()} TL`;
-        }
-
-        // Döviz Çevirici (Yaklaşık Kurlar)
-        function convertCurrency() {
-            const tl = parseFloat(document.getElementById('convert-tl').value) || 0;
-            const usdRate = 33.5; // Ortalama kur tahmini
-            const eurRate = 36.8;
-
-            document.getElementById('res-usd').innerText = `$${(tl / usdRate).toFixed(2)}`;
-            document.getElementById('res-eur').innerText = `€${(tl / eurRate).toFixed(2)}`;
-        }
-
-        // Akıllı Asistan Chatbot
-        function toggleChat() {
-            const box = document.getElementById('chat-box');
-            box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        function sendChat() {
-            const input = document.getElementById('chat-in');
-            const txt = input.value.trim();
-            if (!txt) return;
-
-            addMsg(txt, 'user');
-            input.value = '';
-
-            setTimeout(() => {
-                botReply(txt.toLowerCase());
-            }, 500);
-        }
-
-        function addMsg(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `msg ${sender}`;
-            msgDiv.innerText = text;
-            const container = document.getElementById('chat-messages');
-            container.appendChild(msgDiv);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function botReply(query) {
-            let reply = "Tam anlayamadım. Ekranın sol üstünden gider ekleyebilir, pasta grafikten harcamalarınızı inceleyebilir veya silme butonuyla kayıt kaldırabilirsiniz!";
-
-            if (query.includes('ekle') || query.includes('nasıl')) {
-                reply = "Sol üstteki 'Yeni Gider Ekle' formundaki bilgileri doldurup 'Kaydet' butonuna basarak kolayca harcama ekleyebilirsiniz.";
-            } else if (query.includes('sil') || query.includes('kaldır')) {
-                reply = "Gider Kayıtları listesindeki kırmızı çöp kutusu butonuna basarak ilgili kaydı silebilirsiniz.";
-            } else if (query.includes('takvim') || query.includes('hatırlat')) {
-                reply = "Gider kaydının yanındaki mavi takvim ikonuna basarak ödemeyi telefon/Google takviminize indirebilirsiniz!";
-            } else if (query.includes('silinir mi') || query.includes('kayıt') || query.includes('kaydet')) {
-                reply = "Tüm verileriniz tamamen sizin tarayıcınızda (LocalStorage) saklanır. Sayfayı kapatsanız dahi verileriniz silinmez.";
-            } else if (query.includes('merhaba') || query.includes('selam')) {
-                reply = "Selam! Bütçe yönetimiyle ilgili takıldığınız her şeyi bana sorabilirsiniz.";
-            }
-
-            addMsg(reply, 'bot');
-        }
-    </script>
+    fetchLiveRates();
+    setInterval(fetchLiveRates, 30000);
+  </script>
 </body>
 </html>
