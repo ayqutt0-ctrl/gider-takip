@@ -129,7 +129,7 @@
     }
 
     .chat-box {
-      position: fixed; bottom: 90px; right: 24px; width: 340px; height: 440px;
+      position: fixed; bottom: 90px; right: 24px; width: 350px; height: 480px;
       background: var(--card); border: 1px solid var(--border); border-radius: 16px;
       display: none; flex-direction: column; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.5); z-index: 1000;
     }
@@ -137,8 +137,20 @@
       background: var(--ai-glow); color: #fff; padding: 12px 16px;
       font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; align-items: center;
     }
+    
+    /* HIZLI KULLANIM BUTONU */
+    .chat-actions {
+      background: var(--input-bg); padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: center;
+    }
+    .quick-btn {
+      background: var(--card); color: var(--accent); border: 1px solid var(--accent);
+      border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+    }
+    .quick-btn:hover { background: var(--accent); color: #000; }
+
     .chat-msgs { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
-    .msg { padding: 9px 13px; border-radius: 10px; max-width: 85%; line-height: 1.4; word-break: break-word; }
+    .msg { padding: 9px 13px; border-radius: 10px; max-width: 88%; line-height: 1.4; word-break: break-word; }
     .msg.bot { background: var(--input-bg); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
     .msg.user { background: #6366f1; color: #fff; align-self: flex-end; font-weight: 600; }
     .chat-input { display: flex; padding: 10px; background: var(--input-bg); border-top: 1px solid var(--border); gap: 6px; }
@@ -242,7 +254,7 @@
           <h3><i class="fa-solid fa-calculator"></i> Hızlı Döviz Çevirici</h3>
           <div class="form-group">
             <input type="number" id="convertTL" placeholder="TL Miktarı Girin..." oninput="convertCurrency()">
-            <div style="display:flex; justify-size:space-between; font-size:12px; background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; font-size:12px; background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
               <span>Tahmini Dolar: <strong id="resUSD" style="color:var(--accent);">$0.00</strong></span>
               <span style="margin-left:auto;">Tahmini Euro: <strong id="resEUR" style="color:var(--accent);">€0.00</strong></span>
             </div>
@@ -262,8 +274,14 @@
       <span><i class="fa-solid fa-sparkles"></i> A.I.A Akıllı Bütçe Asistanı</span>
       <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
     </div>
+    
+    <!-- HIZLI SORU BUTONU -->
+    <div class="chat-actions">
+      <button class="quick-btn" onclick="askUsage()"><i class="fa-solid fa-circle-info"></i> Bu uygulama nasıl kullanılır?</button>
+    </div>
+
     <div class="chat-msgs" id="chatMsgs">
-      <div class="msg bot">Merhaba! Ben bütçe ve hesap asistanınız A.I.A. Bana harcamalarınızı, döviz kurlarını sorabilir veya doğrudan matematiksel hesap yaptırabilirsiniz! ✨</div>
+      <div class="msg bot">Merhaba! Ben bütçe ve hesap asistanınız A.I.A. Bana harcamalarınızı, döviz kurlarını sorabilir veya doğrudan hesap yaptırabilirsiniz! ✨</div>
     </div>
     <div class="chat-input">
       <input type="text" id="chatInput" placeholder="Soru sor veya hesap yaptır..." onkeydown="if(event.key==='Enter') sendChat()">
@@ -302,8 +320,8 @@
           liveRates.EUR = data.rates.TRY / data.rates.EUR;
           liveRates.GOLD = (2650 / 31.1035) * liveRates.USD;
 
-          document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(4)} ₺`;
-          document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(4)} ₺`;
+          document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(2)} ₺`;
+          document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(2)} ₺`;
           document.getElementById('goldRate').innerText = `${liveRates.GOLD.toFixed(2)} ₺`;
         }
       } catch (e) {}
@@ -435,6 +453,13 @@
       box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
     }
 
+    function askUsage() {
+      addMsg("Bu uygulama nasıl kullanılır?", 'user');
+      setTimeout(() => {
+        addMsg(getUsageGuide(), 'bot');
+      }, 300);
+    }
+
     function sendChat() {
       const input = document.getElementById('chatInput');
       const val = input.value.trim();
@@ -456,14 +481,37 @@
       }, 300);
     }
 
+    function getUsageGuide() {
+      return "📌 Uygulama Kullanım Rehberi:\n\n" +
+             "1️⃣ Bütçe Belirleme: 'Aylık Gelir' alanına maaş/gelirini gir.\n" +
+             "2️⃣ Gider Ekleme: Fatura, abonelik veya borçlarını tutar ve ödeme günüyle kaydet.\n" +
+             "3️⃣ Takvim & Hatırlatıcı: Yanındaki takvim simgesiyle ödemelerini telefon/bilgisayar takvimine aktar.\n" +
+             "4️⃣ Canlı Kurlar: USD, EUR ve Altın kurlarını anlık takip et.\n" +
+             "5️⃣ Asistan: Bana 'Kalan bütçem ne?', 'Dolar ne kadar?' sorabilir ya da '450 + 1200' gibi matematik işlemleri yaptırabilirsin!";
+    }
+
     function processSmartReply(query, totalGiderTL) {
-      let q = query.toLowerCase();
+      let q = query.toLowerCase().trim();
       let rem = budget - totalGiderTL;
 
-      // 1. Matematiksel Hesaplama Kontrolü (Toplama, Çıkarma vb.)
+      // 1. Teşekkürler / Rica
+      if (q.includes('teşekkür') || q.includes('tesekkur') || q.includes('sağol') || q.includes('sagol') || q.includes('eyvallah')) {
+        return "Rica ederim! Her zaman yardımcı olmaya hazırım. Başka bir sorunuz var mı?";
+      }
+
+      // 2. Kullanım & Amaç
+      if (q.includes('nasıl kullanılır') || q.includes('nasil kullanilir') || q.includes('amaç') || q.includes('amac') || q.includes('ne işe yarar')) {
+        return getUsageGuide();
+      }
+
+      // 3. Selamlaşma
+      if (q.includes('merhaba') || q.includes('selam') || q.includes('naber') || q.includes('nasılsın') || q.includes('nasilsin')) {
+        return "Selamlar! Bütçeniz, ödemeleriniz veya kurlar hakkında size nasıl yardımcı olabilirim?";
+      }
+
+      // 4. Matematiksel Hesaplama Kontrolü
       if (/[\d\+\-\*\/\.]/.test(q) && (q.includes('+') || q.includes('-') || q.includes('*') || q.includes('/') || q.includes('topla'))) {
         try {
-          // Sadece sayı ve matematik simgelerini ayıkla
           let mathExpr = q.replace(/[^0-9\+\-\*\/\.]/g, '');
           if (mathExpr) {
             let res = eval(mathExpr);
@@ -472,20 +520,15 @@
         } catch (e) {}
       }
 
-      // 2. Selamlaşma ve Genel Konuşma
-      if (q.includes('merhaba') || q.includes('selam') || q.includes('naber') || q.includes('nasılsın')) {
-        return "Selamlar! Harika bir gün dilerim. Bütçeniz, döviz kurları veya hesaplamalarla ilgili size nasıl yardımcı olabilirim?";
-      }
-
-      // 3. Kalan / Bütçe Durumu
-      if (q.includes('kalan') || q.includes('bütçe') || q.includes('cebimde') || q.includes('para var')) {
+      // 5. Kalan / Bütçe Durumu
+      if (q.includes('kalan') || q.includes('bütçe') || q.includes('butce') || q.includes('cebimde') || q.includes('para var')) {
         if (budget == 0) {
           return "Henüz bir aylık gelir girmediniz. 'Aylık Gelir' kutusuna bütçenizi yazarsanız net kalan parayı hesaplayabilirim.";
         }
         return `Aylık gelirin ${budget} TL. Toplam harcaman ${Math.round(totalGiderTL)} TL. Cebine kalan net tutar: ${Math.round(rem)} TL.`;
       }
 
-      // 4. Harcama ve Gider Detayları
+      // 6. Harcama ve Gider Detayları
       if (q.includes('gider') || q.includes('harcama') || q.includes('ne kadar harcadım')) {
         if (expenses.length === 0) {
           return "Şu an eklenmiş hiç gider kaydınız bulunmuyor.";
@@ -493,18 +536,13 @@
         return `Şu ana kadar eklediğiniz ${expenses.length} adet giderin toplam tutarı: ${Math.round(totalGiderTL)} TL.`;
       }
 
-      // 5. Döviz ve Altın Kurları
+      // 7. Döviz ve Altın Kurları
       if (q.includes('döviz') || q.includes('dolar') || q.includes('euro') || q.includes('kur') || q.includes('altın')) {
         return `Güncel Anlık Kurlar:\n• USD: ${liveRates.USD.toFixed(2)} TL\n• EUR: ${liveRates.EUR.toFixed(2)} TL\n• Gram Altın: ${liveRates.GOLD.toFixed(2)} TL`;
       }
 
-      // 6. Tema veya Görünüm
-      if (q.includes('tema') || q.includes('renk') || q.includes('görünüm')) {
-        return "Sağ üst köşedeki menüyü kullanarak Mavi, Koyu, Açık ve Gri temalar arasında geçiş yapabilirsiniz.";
-      }
-
-      // 7. Anlaşılmayan Durumlar İçin Esnek Cevap
-      return `"${query}" sorunuzu tam anlayamadım. Bütçe kalanını sorabilir, döviz kurlarını öğrenebilir ya da "250 + 400" gibi işlemler yaptırabilirsiniz!`;
+      // 8. Esnek Cevap
+      return `"${query}" sorunuzu tam anlayamadım. Bütçe kalanınızı sorabilir, döviz kurlarını öğrenebilir ya da "Bu uygulama nasıl kullanılır?" butonuna tıklayabilirsiniz!`;
     }
 
     function addMsg(text, sender) {
