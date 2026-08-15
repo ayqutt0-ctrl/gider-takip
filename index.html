@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cebimdeki Giderler Ultra Pro v3</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Cebimdeki Giderler Pro v3</title>
   <style>
     /* TEMALAR */
     body.theme-default {
@@ -33,7 +31,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-top: 24px; padding-bottom: 60px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 60px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
     
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .header h1 { font-size: 20px; font-weight: 700; color: var(--accent); }
@@ -176,7 +174,7 @@
   <div class="header">
     <h1>Cebimdeki Giderler</h1>
     <div class="header-actions">
-      <button class="guide-btn" onclick="toggleGuide()">❓ Nasıl Kullanılır?</button>
+      <button class="guide-btn" onclick="toggleGuide()">❓ Rehber</button>
       <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
         <option value="theme-default">🎨 Mavi</option>
         <option value="theme-dark">🖤 Koyu</option>
@@ -186,33 +184,33 @@
     </div>
   </div>
 
-  <!-- KRİTİK YAKLAŞAN ÖDEME BİLDİRİM BANNER'I -->
+  <!-- UYARI BANDI -->
   <div class="urgent-banner" id="urgentBanner">
-    🚨 <span>Yaklaşan veya son günü gelmiş ödemeleriniz var!</span>
+    🚨 <span id="urgentText">Yaklaşan ödemeleriniz var!</span>
   </div>
 
-  <!-- NASIL KULLANILIR PENCERESİ -->
+  <!-- REHBER -->
   <div class="guide-box" id="guideBox">
-    <h3>❓ Nasıl Kullanılır? (Kısa Rehber)</h3>
+    <h3>❓ Nasıl Kullanılır?</h3>
     <ul>
-      <li>💵 <b>Aylık Gelir:</b> Sayfanın üstünden bütçeni/maaşını gir. Toplam giderler çıkınca net kalan paran hesaplanır.</li>
-      <li>➕ <b>Gider Ekleme:</b> Fatura, abonelik veya borçlarını tutarı ve <b>ödeme günü (1-31)</b> ile kaydet.</li>
-      <li>🔔 <b>Gün Sayacı:</b> Sistem ödemene kaç gün kaldığını hesaplar ve uyarır.</li>
-      <li>✓ <b>Ödendi İşaretleme:</b> Ödediğin giderin yanındaki tik (✓) butonuna bas.</li>
-      <li>🔄 <b>Ay Başı Sıfırlama:</b> Her yeni ay başladığında en alttaki <i>"Yeni Aya Başla"</i> butonuna basarak tüm ödemeleri tekrar aktif et.</li>
+      <li>💵 <b>Aylık Gelir:</b> Bütçenizi girin, geriye kalan net paranız hesaplansın.</li>
+      <li>➕ <b>Gider Ekleme:</b> Fatura veya borçlarınızı son ödeme günü (1-31) ile kaydedin.</li>
+      <li>🔔 <b>Öncelikli Uyarı:</b> Son 3 günü kalan ödemeler otomatik olarak üstte kırmızı uyarı verir.</li>
+      <li>📊 <b>Bütçe Sağlık Skoru:</b> Sabit giderlerinizin bütçenize oranını (🟢/🟡/🔴) otomatik analiz eder.</li>
     </ul>
-    <button class="guide-close" onclick="toggleGuide()">Anladım 👍</button>
+    <button class="guide-close" onclick="toggleGuide()">Kapat 👍</button>
     <div style="clear:both;"></div>
   </div>
 
   <!-- CANLI DÖVİZ BANDI -->
   <div class="rates-ticker">
-    <div class="rate-item"><span class="rate-label">USD:</span> <span class="rate-val" id="usdRate">... ₺</span></div>
-    <div class="rate-item"><span class="rate-label">EUR:</span> <span class="rate-val" id="eurRate">... ₺</span></div>
-    <div class="rate-item"><span class="rate-label">Gram Altın:</span> <span class="rate-val" id="goldRate" style="color:var(--gold);">... ₺</span></div>
+    <div class="rate-item"><span class="rate-label">USD:</span> <span class="rate-val" id="usdRate">34.50 ₺</span></div>
+    <div class="rate-item"><span class="rate-label">EUR:</span> <span class="rate-val" id="eurRate">37.20 ₺</span></div>
+    <div class="rate-item"><span class="rate-label">Gr. Altın:</span> <span class="rate-val" id="goldRate" style="color:var(--gold);">3.020 ₺</span></div>
     <button class="refresh-btn" onclick="fetchLiveRates()" title="Kurları Yenile">🔄</button>
   </div>
 
+  <!-- DASHBOARD -->
   <div class="dashboard-grid">
     <div class="dash-card">
       <p>Aylık Gelir / Bütçe</p>
@@ -234,7 +232,7 @@
   <!-- ÖDEME İLERLEME ÇUBUĞU -->
   <div class="progress-box">
     <div class="progress-header">
-      <span>Ödeme Durumu</span>
+      <span>Ay İçi Ödeme Durumu</span>
       <span id="progressText">%0 Ödendi</span>
     </div>
     <div class="progress-bar">
@@ -242,16 +240,16 @@
     </div>
   </div>
 
-  <!-- Kategori Dağılım Grafiği -->
+  <!-- Kategori Grafiği -->
   <div class="chart-box" id="chartBox">
     <h3>Kategori Dağılımı</h3>
     <div id="chartContent"></div>
   </div>
 
-  <!-- Yeni Gider Ekleme Formu -->
+  <!-- Form -->
   <div class="form-group">
     <h3>Yeni Gider Ekle</h3>
-    <input type="text" id="title" placeholder="Gider Adı (örn. Spotify, KYK, İnternet)">
+    <input type="text" id="title" placeholder="Gider Adı (örn. KYK, Spotify, İnternet)">
     
     <div class="form-row">
       <select id="currency">
@@ -276,7 +274,7 @@
     <button onclick="addExpense()">Gideri Listeye Ekle</button>
   </div>
 
-  <!-- Arama, Filtreleme ve Sıralama -->
+  <!-- Filtre ve Sıralama -->
   <div class="filter-bar">
     <input type="text" id="searchInput" placeholder="Gider ara..." oninput="render()">
     <select id="categoryFilter" onchange="render()">
@@ -288,9 +286,9 @@
       <option value="💳 Taksit & Diğer">💳 Taksit & Diğer</option>
     </select>
     <select id="sortSelect" onchange="render()">
-      <option value="day">📅 Ödeme Günü</option>
-      <option value="amountDesc">💰 Tutar (Yüksek)</option>
-      <option value="amountAsc">💸 Tutar (Düşük)</option>
+      <option value="day">📅 Ödeme Gününe Göre</option>
+      <option value="amountDesc">💰 Tutara Göre (Azalan)</option>
+      <option value="amountAsc">💸 Tutara Göre (Artan)</option>
     </select>
   </div>
   
@@ -305,11 +303,16 @@
   </div>
 
   <script>
-    let expenses = JSON.parse(localStorage.getItem('expenses_v2')) || [];
-    let budget = localStorage.getItem('monthly_budget') || 0;
-    let activeTheme = localStorage.getItem('app_theme') || 'theme-default';
+    let expenses = [];
+    try {
+      expenses = JSON.parse(localStorage.getItem('expenses_v3')) || [];
+    } catch(e) {
+      expenses = [];
+    }
 
-    let liveRates = { USD: 34.5, EUR: 37.2, GOLD: 3020 };
+    let budget = localStorage.getItem('monthly_budget_v3') || 0;
+    let activeTheme = localStorage.getItem('app_theme_v3') || 'theme-default';
+    let liveRates = { USD: 34.50, EUR: 37.20, GOLD: 3020 };
 
     document.body.className = activeTheme;
     document.getElementById('themeSelect').value = activeTheme;
@@ -323,37 +326,27 @@
     async function fetchLiveRates() {
       try {
         const resFx = await fetch('https://api.frankfurter.app/latest?from=USD&to=TRY,EUR');
-        const dataFx = await resFx.json();
-        liveRates.USD = dataFx.rates.TRY;
-        liveRates.EUR = (dataFx.rates.TRY / dataFx.rates.EUR);
-
-        const resGold = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
-        if(resGold.ok) {
-          const goldData = await resGold.json();
-          const goldOnsUSD = parseFloat(goldData.price);
-          liveRates.GOLD = Math.round((goldOnsUSD / 31.1035) * liveRates.USD);
+        if(resFx.ok) {
+          const dataFx = await resFx.json();
+          liveRates.USD = dataFx.rates.TRY;
+          liveRates.EUR = (dataFx.rates.TRY / dataFx.rates.EUR);
+          document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(2)} ₺`;
+          document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(2)} ₺`;
         }
-
-        document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(2)} ₺`;
-        document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(2)} ₺`;
-        document.getElementById('goldRate').innerText = `${liveRates.GOLD.toLocaleString('tr-TR')} ₺`;
-
-        render();
       } catch (err) {
-        document.getElementById('usdRate').innerText = `${liveRates.USD.toFixed(2)} ₺`;
-        document.getElementById('eurRate').innerText = `${liveRates.EUR.toFixed(2)} ₺`;
-        document.getElementById('goldRate').innerText = `${liveRates.GOLD.toLocaleString('tr-TR')} ₺`;
+        console.log("Canlı döviz çekilemedi, varsayılan kurlar kullanılıyor.");
       }
+      render();
     }
 
     function changeTheme(themeName) {
       document.body.className = themeName;
-      localStorage.setItem('app_theme', themeName);
+      localStorage.setItem('app_theme_v3', themeName);
     }
 
     function updateBudget(val) {
       budget = Number(val);
-      localStorage.setItem('monthly_budget', budget);
+      localStorage.setItem('monthly_budget_v3', budget);
       render();
     }
 
@@ -377,6 +370,7 @@
       const progressText = document.getElementById('progressText');
       const healthBadge = document.getElementById('healthBadge');
       const urgentBanner = document.getElementById('urgentBanner');
+      const urgentText = document.getElementById('urgentText');
       
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
       const filterCat = document.getElementById('categoryFilter').value;
@@ -389,7 +383,7 @@
       let categoryTotals = {};
       let urgentCount = 0;
 
-      // SIRALAMA ALGORİTMASI
+      // SIRALAMA
       expenses.sort((a, b) => {
         if (a.paid !== b.paid) return a.paid ? 1 : -1;
         
@@ -403,7 +397,7 @@
       });
 
       expenses.forEach((item) => {
-        totalsOriginal[item.currency] += Number(item.amount);
+        totalsOriginal[item.currency] = (totalsOriginal[item.currency] || 0) + Number(item.amount);
 
         let itemTL = Number(item.amount);
         if (item.currency === '$') itemTL *= liveRates.USD;
@@ -419,10 +413,10 @@
         }
       });
 
-      // Kritik Bildirim Bandı Kontrolü
+      // UYARI BANDI
       if (urgentCount > 0) {
         urgentBanner.style.display = 'flex';
-        urgentBanner.querySelector('span').innerText = `Ödemesi yaklaşan veya son günü gelmiş ${urgentCount} gideriniz var!`;
+        urgentText.innerText = `Ödemesi yaklaşan veya bugün olan ${urgentCount} kalemin var!`;
       } else {
         urgentBanner.style.display = 'none';
       }
@@ -480,11 +474,11 @@
       remainingEl.innerText = `${Math.round(netRemaining).toLocaleString('tr-TR')} ₺`;
       remainingEl.style.color = netRemaining < 0 ? 'var(--danger)' : 'var(--accent)';
 
-      // FINANSAL SAĞLIK SKORU
+      // SAĞLIK SKORU
       if (budget > 0) {
         const ratio = (totalTLValue / budget) * 100;
         if (ratio <= 40) {
-          healthBadge.innerHTML = '<span class="health-badge" style="background:rgba(16,185,129,0.2); color:var(--success);">🟢 Durum Harika (%' + Math.round(ratio) + ')</span>';
+          healthBadge.innerHTML = '<span class="health-badge" style="background:rgba(16,185,129,0.2); color:var(--success);">🟢 Durum Mükemmel (%' + Math.round(ratio) + ')</span>';
         } else if (ratio <= 70) {
           healthBadge.innerHTML = '<span class="health-badge" style="background:rgba(245,158,11,0.2); color:var(--warning);">🟡 Makul Seviye (%' + Math.round(ratio) + ')</span>';
         } else {
@@ -515,10 +509,10 @@
           `;
         }
       } else {
-        chartContent.innerHTML = '<div style="font-size:12px; color:var(--subtext); text-align:center;">Henüz grafik için veri yok.</div>';
+        chartContent.innerHTML = '<div style="font-size:12px; color:var(--subtext); text-align:center;">Grafik için veri bulunamadı.</div>';
       }
 
-      localStorage.setItem('expenses_v2', JSON.stringify(expenses));
+      localStorage.setItem('expenses_v3', JSON.stringify(expenses));
     }
 
     function addExpense() {
@@ -528,7 +522,7 @@
       const category = document.getElementById('category').value;
       const payDay = document.getElementById('payDay').value;
 
-      if(!title || !amount || !payDay) return alert('Lütfen başlık, tutar ve ödeme gününü girin!');
+      if(!title || !amount || !payDay) return alert('Lütfen başlık, tutar ve ödeme gününü eksiksiz girin!');
 
       expenses.push({ title, amount, currency, category, payDay, paid: false });
       
@@ -552,7 +546,7 @@
     }
 
     function resetMonth() {
-      if(confirm('Yeni bir aya geçiyorsunuz. Tüm ödemelerin "Ödendi" durumları sıfırlansın mı?')) {
+      if(confirm('Yeni bir aya geçiyorsunuz. Tüm ödemeler aktif hale getirilsin mi?')) {
         expenses.forEach(item => item.paid = false);
         render();
       }
@@ -582,6 +576,7 @@
       fileReader.readAsText(event.target.files[0]);
     }
 
+    // Uygulamayı Başlat
     fetchLiveRates();
   </script>
 </body>
