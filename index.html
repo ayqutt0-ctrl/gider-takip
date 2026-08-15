@@ -242,7 +242,7 @@
           <h3><i class="fa-solid fa-calculator"></i> Hızlı Döviz Çevirici</h3>
           <div class="form-group">
             <input type="number" id="convertTL" placeholder="TL Miktarı Girin..." oninput="convertCurrency()">
-            <div style="display:flex; justify-content:space-between; font-size:12px; background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <div style="display:flex; justify-size:space-between; font-size:12px; background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
               <span>Tahmini Dolar: <strong id="resUSD" style="color:var(--accent);">$0.00</strong></span>
               <span style="margin-left:auto;">Tahmini Euro: <strong id="resEUR" style="color:var(--accent);">€0.00</strong></span>
             </div>
@@ -263,10 +263,10 @@
       <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
     </div>
     <div class="chat-msgs" id="chatMsgs">
-      <div class="msg bot">Merhaba! Ben Llama-3 yapay zeka destekli finans asistanınız. Bütçeniz, harcama analizleriniz veya finansal tavsiyeler için bana dilediğinizi sorabilirsiniz! ✨</div>
+      <div class="msg bot">Merhaba! Ben bütçe ve hesap asistanınız A.I.A. Bana harcamalarınızı, döviz kurlarını sorabilir veya doğrudan matematiksel hesap yaptırabilirsiniz! ✨</div>
     </div>
     <div class="chat-input">
-      <input type="text" id="chatInput" placeholder="Soru sor veya tavsiye iste..." onkeydown="if(event.key==='Enter') sendChat()">
+      <input type="text" id="chatInput" placeholder="Soru sor veya hesap yaptır..." onkeydown="if(event.key==='Enter') sendChat()">
       <button onclick="sendChat()">Gönder</button>
     </div>
   </div>
@@ -429,13 +429,13 @@
       document.getElementById('resEUR').innerText = `€${(tl / liveRates.EUR).toFixed(2)}`;
     }
 
-    /* YAPAY ZEKA (AI) ENTEGRASYONU - GROQ / LLAMA-3 API */
+    /* AKILLI ASİSTAN MANTIĞI */
     function toggleChat() {
       const box = document.getElementById('chatBox');
       box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
     }
 
-    async function sendChat() {
+    function sendChat() {
       const input = document.getElementById('chatInput');
       const val = input.value.trim();
       if (!val) return;
@@ -443,9 +443,6 @@
       addMsg(val, 'user');
       input.value = '';
 
-      const loadingId = addMsg("Düşünüyor...", 'bot');
-
-      // Bütçe verilerini yapay zekaya bağlam gönderiyoruz
       let totalGiderTL = expenses.reduce((acc, curr) => {
         let v = Number(curr.amount);
         if (curr.currency === '$') v *= liveRates.USD;
@@ -453,74 +450,70 @@
         return acc + v;
       }, 0);
 
-      const contextPrompt = `
-Kullanıcının Finans Durumu:
-- Aylık Gelir / Bütçe: ${budget} TL
-- Toplam Gider: ${Math.round(totalGiderTL)} TL
-- Kalan Net Para: ${Math.round(budget - totalGiderTL)} TL
-- Güncel Döviz: USD: ${liveRates.USD.toFixed(2)} TL, EUR: ${liveRates.EUR.toFixed(2)} TL, Altın: ${liveRates.GOLD.toFixed(2)} TL
-- Ekli Gider Listesi: ${JSON.stringify(expenses)}
-
-Kullanıcının Sorusu: "${val}"
-
-Sen samimi, akıllı ve net yanıtlar veren Türkçe bir bütçe ve finans asistanısın. Kullanıcının sorusuna yukarıdaki verileri analiz ederek ve finansı göz önünde bulundurarak kısa, öz ve mantıklı yanıt ver.
-      `;
-
-      try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer gsk_yG6Q12sS3gOaL0pE8H7AWGdyb3FYp9aQ0oR4N1k4Z2X1M5P9' // Ücretsiz Public Groq Key
-          },
-          body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            messages: [{ role: "user", content: contextPrompt }],
-            max_tokens: 300
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          let reply = data.choices[0].message.content;
-          updateMsg(loadingId, reply);
-        } else {
-          // Yedek akıllı yanıt mekanizması (API limitine takılırsa)
-          updateMsg(loadingId, fallbackReply(val, totalGiderTL));
-        }
-      } catch (err) {
-        updateMsg(loadingId, fallbackReply(val, totalGiderTL));
-      }
+      const reply = processSmartReply(val, totalGiderTL);
+      setTimeout(() => {
+        addMsg(reply, 'bot');
+      }, 300);
     }
 
-    function fallbackReply(q, totalGiderTL) {
-      q = q.toLowerCase();
+    function processSmartReply(query, totalGiderTL) {
+      let q = query.toLowerCase();
       let rem = budget - totalGiderTL;
-      if (q.includes('kalan') || q.includes('bütçe') || q.includes('cebimde')) {
-        return `Aylık gelirin ${budget} TL. Toplam harcaman ${Math.round(totalGiderTL)} TL olduğu için cebinde ${Math.round(rem)} TL kaldı.`;
-      } else if (q.includes('gider') || q.includes('harcama')) {
-        return `Şu anda sistemde ${expenses.length} adet gider kaydı var ve toplamı ${Math.round(totalGiderTL)} TL tutuyor.`;
-      } else if (q.includes('döviz') || q.includes('dolar') || q.includes('kur')) {
-        return `Güncel Dolar: ${liveRates.USD.toFixed(2)} TL, Euro: ${liveRates.EUR.toFixed(2)} TL, Gram Altın: ${liveRates.GOLD.toFixed(2)} TL.`;
+
+      // 1. Matematiksel Hesaplama Kontrolü (Toplama, Çıkarma vb.)
+      if (/[\d\+\-\*\/\.]/.test(q) && (q.includes('+') || q.includes('-') || q.includes('*') || q.includes('/') || q.includes('topla'))) {
+        try {
+          // Sadece sayı ve matematik simgelerini ayıkla
+          let mathExpr = q.replace(/[^0-9\+\-\*\/\.]/g, '');
+          if (mathExpr) {
+            let res = eval(mathExpr);
+            return `Hesaplama Sonucu: ${mathExpr} = ${res}`;
+          }
+        } catch (e) {}
       }
-      return `Şu an bütçene göre cebinde kalan net tutar ${Math.round(rem)} TL. Harcamaların hakkında detay sormak ister misin?`;
+
+      // 2. Selamlaşma ve Genel Konuşma
+      if (q.includes('merhaba') || q.includes('selam') || q.includes('naber') || q.includes('nasılsın')) {
+        return "Selamlar! Harika bir gün dilerim. Bütçeniz, döviz kurları veya hesaplamalarla ilgili size nasıl yardımcı olabilirim?";
+      }
+
+      // 3. Kalan / Bütçe Durumu
+      if (q.includes('kalan') || q.includes('bütçe') || q.includes('cebimde') || q.includes('para var')) {
+        if (budget == 0) {
+          return "Henüz bir aylık gelir girmediniz. 'Aylık Gelir' kutusuna bütçenizi yazarsanız net kalan parayı hesaplayabilirim.";
+        }
+        return `Aylık gelirin ${budget} TL. Toplam harcaman ${Math.round(totalGiderTL)} TL. Cebine kalan net tutar: ${Math.round(rem)} TL.`;
+      }
+
+      // 4. Harcama ve Gider Detayları
+      if (q.includes('gider') || q.includes('harcama') || q.includes('ne kadar harcadım')) {
+        if (expenses.length === 0) {
+          return "Şu an eklenmiş hiç gider kaydınız bulunmuyor.";
+        }
+        return `Şu ana kadar eklediğiniz ${expenses.length} adet giderin toplam tutarı: ${Math.round(totalGiderTL)} TL.`;
+      }
+
+      // 5. Döviz ve Altın Kurları
+      if (q.includes('döviz') || q.includes('dolar') || q.includes('euro') || q.includes('kur') || q.includes('altın')) {
+        return `Güncel Anlık Kurlar:\n• USD: ${liveRates.USD.toFixed(2)} TL\n• EUR: ${liveRates.EUR.toFixed(2)} TL\n• Gram Altın: ${liveRates.GOLD.toFixed(2)} TL`;
+      }
+
+      // 6. Tema veya Görünüm
+      if (q.includes('tema') || q.includes('renk') || q.includes('görünüm')) {
+        return "Sağ üst köşedeki menüyü kullanarak Mavi, Koyu, Açık ve Gri temalar arasında geçiş yapabilirsiniz.";
+      }
+
+      // 7. Anlaşılmayan Durumlar İçin Esnek Cevap
+      return `"${query}" sorunuzu tam anlayamadım. Bütçe kalanını sorabilir, döviz kurlarını öğrenebilir ya da "250 + 400" gibi işlemler yaptırabilirsiniz!`;
     }
 
     function addMsg(text, sender) {
       const msgs = document.getElementById('chatMsgs');
       const div = document.createElement('div');
-      const id = 'msg-' + Date.now();
-      div.id = id;
       div.className = `msg ${sender}`;
       div.innerText = text;
       msgs.appendChild(div);
       msgs.scrollTop = msgs.scrollHeight;
-      return id;
-    }
-
-    function updateMsg(id, text) {
-      const el = document.getElementById(id);
-      if (el) el.innerText = text;
     }
 
     fetchLiveRates();
